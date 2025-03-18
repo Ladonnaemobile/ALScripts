@@ -1,0 +1,328 @@
+pg = pg or {}
+pg.dorm3d_rooms = {
+	{
+		invite_cost = "",
+		room_des = "",
+		type = 2,
+		resource_name = "Tianlangxing_DB",
+		assets_prefix = "Tianlangxing",
+		tag = "",
+		invite_banner = "",
+		scene_info = "map_siriushostel_01|Tianlangxing_DB/SiriusHostel",
+		in_map = "floor_1",
+		room = "天狼星",
+		invite_mark = "",
+		id = 1,
+		room_bgm = "story-room-sirius",
+		character = {
+			20220
+		},
+		character_pay = {},
+		character_welcome = {
+			{
+				20220,
+				2000
+			}
+		},
+		character_range = {
+			1
+		},
+		unlock_item = {},
+		default_zone = {
+			{
+				20220,
+				"Chair"
+			}
+		},
+		furniture_zones = {
+			1001,
+			1002,
+			1003
+		},
+		recall_list = {
+			1,
+			2,
+			3,
+			4,
+			5,
+			6,
+			7
+		},
+		ar_anim = {
+			{
+				20220,
+				{
+					1001,
+					1002,
+					1003,
+					1004,
+					1005,
+					1006,
+					1007,
+					1008,
+					1009,
+					1010,
+					1011,
+					1012,
+					1101,
+					1102,
+					1103,
+					1104,
+					1201,
+					1202,
+					1203,
+					1301,
+					1302,
+					1303
+				}
+			}
+		}
+	},
+	{
+		invite_cost = "",
+		room_des = "",
+		type = 2,
+		resource_name = "Nengdai_DB",
+		assets_prefix = "Nengdai",
+		tag = "",
+		invite_banner = "",
+		scene_info = "map_noshirohostel_01|Nengdai_DB/Noshirohostel",
+		in_map = "floor_1",
+		room = "能代",
+		invite_mark = "",
+		id = 2,
+		room_bgm = "story-room-noshiro",
+		character = {
+			30221
+		},
+		character_pay = {},
+		character_welcome = {
+			{
+				30221,
+				0
+			}
+		},
+		character_range = {
+			1
+		},
+		unlock_item = {},
+		default_zone = {
+			{
+				30221,
+				"Chair"
+			}
+		},
+		furniture_zones = {
+			2001,
+			2002,
+			2003
+		},
+		recall_list = {
+			21,
+			22,
+			23,
+			31
+		},
+		ar_anim = {
+			{
+				30221,
+				{
+					2001,
+					2002,
+					2003,
+					2004,
+					2005,
+					2006,
+					2007,
+					2008,
+					2009,
+					2010,
+					2011,
+					2012,
+					2013,
+					2101,
+					2102,
+					2103,
+					2104,
+					2201,
+					2202,
+					2203,
+					2204,
+					2301,
+					2302,
+					2303,
+					2304
+				}
+			}
+		}
+	},
+	[4] = {
+		tag = "beach",
+		room_des = "沙滩、泳装、排球……尽情在海风中玩耍吧~",
+		type = 1,
+		resource_name = "Beach",
+		assets_prefix = "Beach",
+		scene_info = "map_beach_02|Beach",
+		in_map = "floor_1",
+		room = "沙滩",
+		id = 4,
+		room_bgm = "story-room-sirius",
+		character = {},
+		character_pay = {
+			20220,
+			30221
+		},
+		character_welcome = {
+			{
+				20220,
+				1000
+			},
+			{
+				30221,
+				0
+			}
+		},
+		character_range = {
+			0,
+			2
+		},
+		unlock_item = {
+			{
+				2,
+				15022,
+				1
+			}
+		},
+		default_zone = {
+			{
+				20220,
+				"Tianlangxing"
+			},
+			{
+				30221,
+				"Nengdai"
+			}
+		},
+		furniture_zones = {},
+		recall_list = {},
+		invite_cost = {
+			{
+				20220,
+				270110
+			},
+			{
+				30221,
+				270111
+			}
+		},
+		invite_banner = {
+			{
+				20220,
+				{
+					"banner_beach1",
+					"banner_beach2"
+				}
+			},
+			{
+				30221,
+				{
+					"banner_beach3"
+				}
+			}
+		},
+		invite_mark = {
+			{
+				20220,
+				{
+					1,
+					5,
+					6
+				}
+			},
+			{
+				30221,
+				{
+					1,
+					5,
+					6
+				}
+			}
+		},
+		ar_anim = {
+			{
+				20220,
+				{
+					4001,
+					4002,
+					4003,
+					4004,
+					4005
+				}
+			},
+			{
+				30221,
+				{
+					4201,
+					4202,
+					4203,
+					4204,
+					4205
+				}
+			}
+		}
+	},
+	[5] = {
+		invite_cost = "",
+		recall_list = "",
+		default_zone = "",
+		resource_name = "Bathroom",
+		type = 1,
+		ar_anim = "",
+		room_bgm = "story-room-sirius",
+		invite_banner = "",
+		scene_info = "",
+		in_map = "floor_1",
+		room = "浴室",
+		invite_mark = "",
+		tag = "",
+		furniture_zones = "",
+		room_des = "",
+		assets_prefix = "Bathroom",
+		id = 5,
+		character = {
+			20220
+		},
+		character_pay = {},
+		character_welcome = {
+			{
+				20220,
+				1000
+			}
+		},
+		character_range = {
+			0,
+			0
+		},
+		unlock_item = {
+			{
+				2,
+				15022,
+				1
+			}
+		}
+	},
+	get_id_list_by_in_map = {
+		floor_1 = {
+			1,
+			2,
+			4,
+			5
+		}
+	},
+	all = {
+		1,
+		2,
+		4,
+		5
+	}
+}
