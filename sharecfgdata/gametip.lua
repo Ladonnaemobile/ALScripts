@@ -27380,6 +27380,10 @@ _G.pg.base.gametip.drom3d_memory_limit_tip = {
 	tip = "当前机型内存小于推荐配置，可能存在闪退风险。"
 }
 
+_G.pg.base.gametip.drom3d_beach_memory_limit_tip = {
+	tip = "检测到手机性能不足，同时邀请3名角色可能会出现游戏崩溃，是否确定邀请？"
+}
+
 _G.pg.base.gametip.blackfriday_main_tip = {
 	tip = {
 		{
