@@ -20,9 +20,9 @@ pg.dorm3d_ik_touch_move = {
 	},
 	[1990311] = {
 		target_ik = 30031200,
-		trigger_dialogue = 30206,
+		trigger_dialogue = 0,
 		back_time = 0.1,
-		move_time = 0.1,
+		move_time = 0.2,
 		id = 1990311,
 		touch_step = {
 			0.9,
@@ -39,9 +39,9 @@ pg.dorm3d_ik_touch_move = {
 	},
 	[1990312] = {
 		target_ik = 31031200,
-		trigger_dialogue = 30206,
+		trigger_dialogue = 0,
 		back_time = 0.1,
-		move_time = 0.1,
+		move_time = 0.2,
 		id = 1990312,
 		touch_step = {
 			0.9,
@@ -58,9 +58,9 @@ pg.dorm3d_ik_touch_move = {
 	},
 	[1990313] = {
 		target_ik = 30031000,
-		trigger_dialogue = 30204,
+		trigger_dialogue = 0,
 		back_time = 0.1,
-		move_time = 0.15,
+		move_time = 0.2,
 		id = 1990313,
 		touch_step = {
 			1,
@@ -75,9 +75,9 @@ pg.dorm3d_ik_touch_move = {
 	},
 	[1990314] = {
 		target_ik = 30031000,
-		trigger_dialogue = 30215,
+		trigger_dialogue = 0,
 		back_time = 0.1,
-		move_time = 0.15,
+		move_time = 0.2,
 		id = 1990314,
 		touch_step = {
 			1,
