@@ -19897,40 +19897,14 @@ pg.activity_template = {
 	},
 	[5808] = {
 		mark = 20250220,
-		id = 5808,
 		title_res_tag = "Georgia_catchup",
+		time = "stop",
 		type = 69,
 		login_pop = 0,
 		config_id = 30,
 		is_show = 45,
+		id = 5808,
 		config_data = {},
-		time = {
-			"timer",
-			{
-				{
-					2025,
-					2,
-					20
-				},
-				{
-					0,
-					0,
-					0
-				}
-			},
-			{
-				{
-					2025,
-					3,
-					19
-				},
-				{
-					23,
-					59,
-					59
-				}
-			}
-		},
 		page_info = {
 			class_name = "FlandreTecCatchupPage",
 			ui_name = "FlandreTecCatchupPage"
@@ -19941,12 +19915,13 @@ pg.activity_template = {
 	},
 	[5809] = {
 		mark = 20250220,
-		id = 5809,
 		title_res_tag = "yidaliv4",
+		time = "stop",
 		type = 18,
 		login_pop = 0,
 		config_id = 3,
 		is_show = 46,
+		id = 5809,
 		config_data = {
 			{
 				21241,
@@ -19975,33 +19950,6 @@ pg.activity_template = {
 			{
 				21253,
 				21254
-			}
-		},
-		time = {
-			"timer",
-			{
-				{
-					2025,
-					2,
-					20
-				},
-				{
-					0,
-					0,
-					0
-				}
-			},
-			{
-				{
-					2025,
-					3,
-					19
-				},
-				{
-					23,
-					59,
-					59
-				}
 			}
 		},
 		page_info = {
@@ -20036,41 +19984,15 @@ pg.activity_template = {
 	},
 	[5810] = {
 		mark = 20250220,
-		config_client = "",
 		title_res_tag = "activity",
+		time = "stop",
 		type = 87,
 		login_pop = 0,
 		config_id = 27,
 		is_show = 47,
+		config_client = "",
 		id = 5810,
 		config_data = {},
-		time = {
-			"timer",
-			{
-				{
-					2025,
-					2,
-					20
-				},
-				{
-					0,
-					0,
-					0
-				}
-			},
-			{
-				{
-					2025,
-					3,
-					19
-				},
-				{
-					23,
-					59,
-					59
-				}
-			}
-		},
 		page_info = {
 			class_name = "YidaliV4FramePage",
 			ui_name = "YidaliV4FramePage"
@@ -20091,12 +20013,13 @@ pg.activity_template = {
 	},
 	[5812] = {
 		mark = 20250227,
-		title_res_tag = "",
+		time = "stop",
 		page_info = "",
 		type = 13,
 		login_pop = 0,
 		config_id = 0,
 		is_show = 0,
+		title_res_tag = "",
 		config_client = "",
 		id = 5812,
 		config_data = {
@@ -20109,33 +20032,6 @@ pg.activity_template = {
 			21283,
 			21284,
 			21285
-		},
-		time = {
-			"timer",
-			{
-				{
-					2025,
-					2,
-					27
-				},
-				{
-					0,
-					0,
-					0
-				}
-			},
-			{
-				{
-					2025,
-					3,
-					19
-				},
-				{
-					23,
-					59,
-					59
-				}
-			}
 		}
 	},
 	[5821] = {
@@ -20326,40 +20222,14 @@ pg.activity_template = {
 	},
 	[5828] = {
 		mark = 20250227,
-		id = 5828,
 		title_res_tag = "raffaello_pt",
+		time = "stop",
 		type = 74,
 		login_pop = 0,
 		config_id = 5828,
 		is_show = 49,
+		id = 5828,
 		config_data = {},
-		time = {
-			"timer",
-			{
-				{
-					2025,
-					2,
-					27
-				},
-				{
-					0,
-					0,
-					0
-				}
-			},
-			{
-				{
-					2025,
-					3,
-					19
-				},
-				{
-					23,
-					59,
-					59
-				}
-			}
-		},
 		page_info = {
 			class_name = "RaphaelSPPtPage",
 			ui_name = "RaphaelSPPtPage"
@@ -20378,12 +20248,13 @@ pg.activity_template = {
 	},
 	[5829] = {
 		mark = 20250227,
-		title_res_tag = "",
+		time = "stop",
 		page_info = "",
 		type = 14,
 		login_pop = 0,
 		config_id = 0,
 		is_show = 0,
+		title_res_tag = "",
 		id = 5829,
 		config_data = {
 			2903,
@@ -20413,33 +20284,6 @@ pg.activity_template = {
 			2927,
 			2928,
 			2929
-		},
-		time = {
-			"timer",
-			{
-				{
-					2025,
-					2,
-					27
-				},
-				{
-					0,
-					0,
-					0
-				}
-			},
-			{
-				{
-					2025,
-					3,
-					19
-				},
-				{
-					23,
-					59,
-					59
-				}
-			}
 		},
 		config_client = {
 			"commonbg/bg_pt_raffaello",
@@ -20525,51 +20369,26 @@ pg.activity_template = {
 	},
 	[5847] = {
 		mark = 20250227,
-		title_res_tag = "",
+		time = "stop",
 		page_info = "",
 		type = 10,
 		login_pop = 0,
 		config_id = 5846,
 		is_show = 0,
+		title_res_tag = "",
 		config_client = "",
 		id = 5847,
-		config_data = {},
-		time = {
-			"timer",
-			{
-				{
-					2025,
-					2,
-					27
-				},
-				{
-					0,
-					0,
-					0
-				}
-			},
-			{
-				{
-					2025,
-					3,
-					19
-				},
-				{
-					23,
-					59,
-					59
-				}
-			}
-		}
+		config_data = {}
 	},
 	[5848] = {
 		mark = 20250313,
-		title_res_tag = "",
+		time = "stop",
 		page_info = "",
 		type = 13,
 		login_pop = 0,
 		config_id = 0,
 		is_show = 0,
+		title_res_tag = "",
 		config_client = "",
 		id = 5848,
 		config_data = {
@@ -20578,33 +20397,6 @@ pg.activity_template = {
 			10192,
 			10193,
 			10194
-		},
-		time = {
-			"timer",
-			{
-				{
-					2025,
-					3,
-					13
-				},
-				{
-					0,
-					0,
-					0
-				}
-			},
-			{
-				{
-					2025,
-					3,
-					20
-				},
-				{
-					23,
-					59,
-					59
-				}
-			}
 		}
 	},
 	[5850] = {
