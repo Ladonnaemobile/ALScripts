@@ -91,3 +91,33 @@ function var_0_1.updateProgressBar(arg_5_0)
 		arg_5_0._bgEff:GetComponent(typeof(CanvasGroup)).alpha = 1 - var_5_0
 	end
 end
+
+function var_0_1.OnOverLoadChange(arg_6_0, arg_6_1)
+	if arg_6_0._progressInfo:GetCount() < 1 then
+		arg_6_0._block:SetActive(true)
+		arg_6_0:OnUnfill()
+	else
+		arg_6_0._block:SetActive(false)
+		arg_6_0:OnFilled()
+
+		if arg_6_1 and arg_6_1.Data then
+			local var_6_0 = arg_6_1.Data.preCast
+
+			if var_6_0 then
+				if var_6_0 == 0 then
+					quickCheckAndPlayAnimator(arg_6_0._skin, "weapon_button_progress_filled")
+				elseif var_6_0 > 0 then
+					quickCheckAndPlayAnimator(arg_6_0._skin, "weapon_button_progress_charge")
+				end
+			end
+		end
+	end
+
+	if arg_6_1 and arg_6_1.Data and arg_6_1.Data.postCast then
+		quickCheckAndPlayAnimator(arg_6_0._skin, "weapon_button_progress_use")
+	end
+
+	if arg_6_0._progressInfo:GetTotal() > 0 then
+		arg_6_0:updateProgressBar()
+	end
+end

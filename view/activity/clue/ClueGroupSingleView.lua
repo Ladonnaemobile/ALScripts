@@ -62,10 +62,16 @@ function var_0_0.SetClueGroup(arg_5_0)
 	setActive(arg_5_0:findTF("picture/lockSite", var_5_2), var_5_3.type == 1 and not var_5_7[1] and not var_5_7[2] and not var_5_7[3])
 	setActive(arg_5_0:findTF("picture/lockChara", var_5_2), var_5_3.type == 2 and not var_5_7[1] and not var_5_7[2] and not var_5_7[3])
 
+	local var_5_8 = false
+
 	for iter_5_1 = 1, 3 do
 		if var_5_7[iter_5_1] then
 			setText(arg_5_0:findTF("clueScroll/Viewport/Content/clue" .. iter_5_1, var_5_2), var_5_5[iter_5_1].desc)
 		elseif arg_5_0.investigatingGroupId == var_5_0 then
+			setText(arg_5_0:findTF("clueScroll/Viewport/Content/clue" .. iter_5_1, var_5_2), "<color=#858593>" .. var_5_5[iter_5_1].unlock_desc .. var_5_5[iter_5_1].unlock_num .. i18n("clue_task_tip", var_5_6) .. "</color>")
+		elseif not var_5_8 then
+			var_5_8 = true
+
 			setText(arg_5_0:findTF("clueScroll/Viewport/Content/clue" .. iter_5_1, var_5_2), "<color=#858593>" .. var_5_5[iter_5_1].unlock_desc .. var_5_5[iter_5_1].unlock_num .. i18n("clue_task_tip", var_5_6) .. "</color>")
 		else
 			setText(arg_5_0:findTF("clueScroll/Viewport/Content/clue" .. iter_5_1, var_5_2), "<color=#858593>？？？</color>")
@@ -140,9 +146,9 @@ function var_0_0.SetClueGroup(arg_5_0)
 				end, var_0_4 * iter_5_3 + var_0_3)
 			end
 		else
-			local var_5_8 = table.indexof(var_5_4, var_5_1[1])
+			local var_5_9 = table.indexof(var_5_4, var_5_1[1])
 
-			for iter_5_4 = var_5_8, 3 do
+			for iter_5_4 = var_5_9, 3 do
 				if arg_5_0.investigatingGroupId == var_5_0 then
 					setText(arg_5_0:findTF("clueScroll/Viewport/Content/clue" .. iter_5_4, var_5_2), "<color=#858593>" .. var_5_5[iter_5_4].unlock_desc .. var_5_5[iter_5_4].unlock_num .. "</color>")
 				else
@@ -150,14 +156,14 @@ function var_0_0.SetClueGroup(arg_5_0)
 				end
 			end
 
-			local var_5_9 = 1
+			local var_5_10 = 1
 
-			for iter_5_5 = var_5_8, var_5_8 + #var_5_1 - 1 do
+			for iter_5_5 = var_5_9, var_5_9 + #var_5_1 - 1 do
 				arg_5_0:StartTimer(function()
 					setText(arg_5_0:findTF("clueScroll/Viewport/Content/clue" .. iter_5_5, var_5_2), var_5_5[iter_5_5].desc)
-				end, var_0_4 * var_5_9)
+				end, var_0_4 * var_5_10)
 
-				var_5_9 = var_5_9 + 1
+				var_5_10 = var_5_10 + 1
 			end
 		end
 

@@ -66,9 +66,19 @@ function var_0_0.updateUI(arg_9_0)
 		var_9_6 = skinCommdityTimeStamp(var_9_7)
 	end
 
-	setText(arg_9_0.btnSkinText, var_9_2)
+	if var_9_2 then
+		setText(arg_9_0.btnSkinText, var_9_2)
+	else
+		setActive(findTF(arg_9_0.btnSkin, "bgTime"), false)
+	end
+
 	setText(arg_9_0.btnActText, "")
-	setText(arg_9_0.btnBuildText, var_9_6)
+
+	if var_9_6 then
+		setText(arg_9_0.btnBuildText, var_9_6)
+	else
+		setActive(findTF(arg_9_0.btnBuild, "bgTime"), false)
+	end
 end
 
 return var_0_0

@@ -122,7 +122,7 @@ function var_0_0.Exit(arg_4_0, arg_4_1)
 	var_4_13(var_4_7, var_4_5[1] or 0)
 
 	if arg_4_0.statistics.submarineAid then
-		var_4_8 = var_4_6[arg_4_0.mainFleetId + 10]
+		var_4_8 = var_4_6[arg_4_0.mainFleetId + Fleet.MEGA_SUBMARINE_FLEET_OFFSET]
 
 		if var_4_8 then
 			var_4_13(var_4_8, var_4_5[2] or 0)
@@ -135,7 +135,7 @@ function var_0_0.Exit(arg_4_0, arg_4_1)
 
 	var_4_14.commander_id_list = var_4_11
 
-	if var_4_4.data1 > 0 and arg_4_0.useVariableTicket then
+	if var_4_4.data1 > 0 and arg_4_0.useVariableTicket == 1 then
 		var_4_14.extra_param = 1
 	else
 		var_4_14.extra_param = 0

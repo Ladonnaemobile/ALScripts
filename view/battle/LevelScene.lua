@@ -580,9 +580,7 @@ function var_0_0.didEnter(arg_36_0)
 				})
 			end,
 			[ActivityConst.ACTIVITY_TYPE_BOSSSINGLE_VARIABLE] = function()
-				arg_36_0:emit(LevelMediator2.ON_BOSSSINGLE_MAP, {
-					mode = OtherworldMapScene.MODE_BATTLE
-				})
+				arg_36_0:emit(LevelMediator2.ON_CLUE_MAP)
 			end
 		})
 	end, SFX_PANEL)

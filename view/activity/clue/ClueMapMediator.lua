@@ -55,7 +55,8 @@ end
 function var_0_0.listNotificationInterests(arg_7_0)
 	return {
 		var_0_0.ON_FLEET_SELECT,
-		var_0_0.OPEN_CLUE_JUMP
+		var_0_0.OPEN_CLUE_JUMP,
+		PlayerProxy.UPDATED
 	}
 end
 
@@ -83,6 +84,8 @@ function var_0_0.handleNotification(arg_8_0, arg_8_1)
 		if var_8_4 == 1 or var_8_4 == 2 or var_8_4 == 3 then
 			triggerToggle(arg_8_0.viewComponent.mapsSwitch[var_8_4], true)
 		end
+	elseif var_8_0 == PlayerProxy.UPDATED then
+		arg_8_0.viewComponent:ShowResUI()
 	end
 end
 
