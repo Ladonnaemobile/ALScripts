@@ -71,7 +71,7 @@ pg.base.activity_clue_group = {
 		title = "诊疗中心",
 		type = 1,
 		id = 3,
-		task_id = "21611",
+		task_id = "21613",
 		pic = "3",
 		unlock_jump = {
 			{
@@ -427,7 +427,7 @@ pg.base.activity_clue_group = {
 		title = "后门",
 		type = 1,
 		id = 24,
-		task_id = "21613",
+		task_id = "21611",
 		pic = "24",
 		unlock_jump = {
 			{

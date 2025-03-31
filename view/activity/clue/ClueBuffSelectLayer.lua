@@ -307,6 +307,12 @@ function var_0_0.SetStageID(arg_19_0, arg_19_1)
 		setActive(arg_19_0.ticket, false)
 		setActive(arg_19_0.ticketTips, false)
 		setImageSprite(arg_19_0:findTF("Stage/stage_type_icon"), LoadSprite("ui/cluebuffselectui_atlas", "tier_" .. var_19_0.type), true)
+
+		arg_19_0.useTicket = false
+
+		setActive(arg_19_0.ticketCheckBox, arg_19_0.useTicket)
+
+		arg_19_0.contextData.useTicket = arg_19_0.useTicket
 	end
 
 	local var_19_6 = pg.expedition_data_template[var_19_0.expedition_id].award_display

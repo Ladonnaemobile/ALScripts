@@ -159,7 +159,9 @@ function var_0_0.Exit(arg_4_0, arg_4_1)
 			var_6_4:AddPassStage(var_6_5:GetExpeditionId())
 			getProxy(ActivityProxy):updateActivity(var_6_4)
 
-			var_6_4.data1 = math.max(var_6_4.data1 - 1, 0)
+			if arg_4_0.useVariableTicket == 1 then
+				var_6_4.data1 = math.max(var_6_4.data1 - 1, 0)
+			end
 		end
 
 		local var_6_6 = {

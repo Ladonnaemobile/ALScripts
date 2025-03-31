@@ -85,6 +85,14 @@ function var_0_0.didEnter(arg_3_0)
 	end, SFX_PANEL)
 	pg.NewStoryMgr.GetInstance():Play(arg_3_0.enterStory)
 	arg_3_0:SubmitClueTask()
+
+	local var_3_0 = getProxy(ContextProxy):getContextByMediator(ClueMapMediator)
+
+	if var_3_0.cleanChild and arg_3_0.contextData.bookOpen then
+		triggerButton(arg_3_0.bookBtn)
+	end
+
+	var_3_0.cleanChild = false
 end
 
 function var_0_0.InitData(arg_10_0)
@@ -148,159 +156,170 @@ function var_0_0.InitData(arg_10_0)
 	arg_10_0.bgms = var_10_4.bgm1
 end
 
-function var_0_0.ShowResUI(arg_11_0)
-	local var_11_0 = getProxy(PlayerProxy):getRawData()
+function var_0_0.RefreshPtAndTicket(arg_11_0)
+	arg_11_0.ptActivity = getProxy(ActivityProxy):getActivityById(ActivityConst.Valleyhospital_PT_ACT_ID)
+	arg_11_0.ptData = ActivityPtData.New(arg_11_0.ptActivity)
 
-	arg_11_0.goldMax = findTF(arg_11_0._tf, "ui/top/res/gold/max"):GetComponent(typeof(Text))
-	arg_11_0.goldValue = findTF(arg_11_0._tf, "ui/top/res/gold/Text"):GetComponent(typeof(Text))
-	arg_11_0.oilMax = findTF(arg_11_0._tf, "ui/top/res/oil/max"):GetComponent(typeof(Text))
-	arg_11_0.oilValue = findTF(arg_11_0._tf, "ui/top/res/oil/Text"):GetComponent(typeof(Text))
-	arg_11_0.gemValue = findTF(arg_11_0._tf, "ui/top/res/gem/Text"):GetComponent(typeof(Text))
+	setText(arg_11_0:findTF("Text", arg_11_0.pt), arg_11_0.ptData.count)
 
-	PlayerResUI.StaticFlush(var_11_0, arg_11_0.goldMax, arg_11_0.goldValue, arg_11_0.oilMax, arg_11_0.oilValue, arg_11_0.gemValue)
-	onButton(arg_11_0, findTF(arg_11_0._tf, "ui/top/res/gold"), function()
+	arg_11_0.activity = getProxy(ActivityProxy):getActivityById(ActivityConst.Valleyhospital_ACT_ID)
+
+	setText(arg_11_0:findTF("ticket/count", arg_11_0.chapterSp), "X " .. arg_11_0.activity.data1)
+end
+
+function var_0_0.ShowResUI(arg_12_0)
+	local var_12_0 = getProxy(PlayerProxy):getRawData()
+
+	arg_12_0.goldMax = findTF(arg_12_0._tf, "ui/top/res/gold/max"):GetComponent(typeof(Text))
+	arg_12_0.goldValue = findTF(arg_12_0._tf, "ui/top/res/gold/Text"):GetComponent(typeof(Text))
+	arg_12_0.oilMax = findTF(arg_12_0._tf, "ui/top/res/oil/max"):GetComponent(typeof(Text))
+	arg_12_0.oilValue = findTF(arg_12_0._tf, "ui/top/res/oil/Text"):GetComponent(typeof(Text))
+	arg_12_0.gemValue = findTF(arg_12_0._tf, "ui/top/res/gem/Text"):GetComponent(typeof(Text))
+
+	PlayerResUI.StaticFlush(var_12_0, arg_12_0.goldMax, arg_12_0.goldValue, arg_12_0.oilMax, arg_12_0.oilValue, arg_12_0.gemValue)
+	onButton(arg_12_0, findTF(arg_12_0._tf, "ui/top/res/gold"), function()
 		pg.playerResUI:ClickGold()
 	end, SFX_PANEL)
-	onButton(arg_11_0, findTF(arg_11_0._tf, "ui/top/res/oil"), function()
+	onButton(arg_12_0, findTF(arg_12_0._tf, "ui/top/res/oil"), function()
 		pg.playerResUI:ClickOil()
 	end, SFX_PANEL)
-	onButton(arg_11_0, findTF(arg_11_0._tf, "ui/top/res/gem"), function()
+	onButton(arg_12_0, findTF(arg_12_0._tf, "ui/top/res/gem"), function()
 		pg.playerResUI:ClickGem()
 	end, SFX_PANEL)
 end
 
-function var_0_0.UpdateCluePanel(arg_15_0)
-	local var_15_0 = ActivityConst.Valleyhospital_ACT_ID
-	local var_15_1 = getProxy(PlayerProxy):getRawData().id
-	local var_15_2 = PlayerPrefs.GetInt("investigatingGroupId_" .. var_15_0 .. "_" .. var_15_1, 0)
-	local var_15_3 = true
-	local var_15_4
-	local var_15_5 = 0
+function var_0_0.UpdateCluePanel(arg_16_0)
+	local var_16_0 = ActivityConst.Valleyhospital_ACT_ID
+	local var_16_1 = getProxy(PlayerProxy):getRawData().id
+	local var_16_2 = PlayerPrefs.GetInt("investigatingGroupId_" .. var_16_0 .. "_" .. var_16_1, 0)
+	local var_16_3 = true
+	local var_16_4
+	local var_16_5 = 0
 
-	if var_15_2 ~= 0 then
-		local var_15_6 = var_0_2.get_id_list_by_group[var_15_2]
+	if var_16_2 ~= 0 then
+		local var_16_6 = var_0_2.get_id_list_by_group[var_16_2]
 
-		var_15_4 = {
-			var_0_2[var_15_6[1]],
-			var_0_2[var_15_6[2]],
-			var_0_2[var_15_6[3]]
+		var_16_4 = {
+			var_0_2[var_16_6[1]],
+			var_0_2[var_16_6[2]],
+			var_0_2[var_16_6[3]]
 		}
-		var_15_5 = getProxy(TaskProxy):getTaskVO(tonumber(var_15_4[3].task_id)):getProgress()
+		var_16_5 = getProxy(TaskProxy):getTaskVO(tonumber(var_16_4[3].task_id)):getProgress()
 
-		for iter_15_0 = 1, 3 do
-			if not getProxy(TaskProxy):getFinishTaskById(tonumber(var_15_4[iter_15_0].task_id)) then
-				var_15_3 = false
+		for iter_16_0 = 1, 3 do
+			if not getProxy(TaskProxy):getFinishTaskById(tonumber(var_16_4[iter_16_0].task_id)) then
+				var_16_3 = false
 
 				break
 			end
 		end
 	end
 
-	if var_15_3 then
-		setText(arg_15_0:findTF("target/Text", arg_15_0.explore), i18n("clue_unselect_tip"))
+	if var_16_3 then
+		setText(arg_16_0:findTF("target/Text", arg_16_0.explore), i18n("clue_unselect_tip"))
 	else
-		setText(arg_15_0:findTF("target/Text", arg_15_0.explore), var_15_4[1].unlock_desc .. var_15_4[1].unlock_num .. "/" .. var_15_4[2].unlock_num .. "/" .. var_15_4[3].unlock_num .. i18n("clue_task_tip", var_15_5))
+		setText(arg_16_0:findTF("target/Text", arg_16_0.explore), var_16_4[1].unlock_desc .. var_16_4[1].unlock_num .. "/" .. var_16_4[2].unlock_num .. "/" .. var_16_4[3].unlock_num .. i18n("clue_task_tip", var_16_5))
 	end
 end
 
-function var_0_0.InitMapsSwitch(arg_16_0)
-	for iter_16_0, iter_16_1 in ipairs(arg_16_0.mapsSwitch) do
-		onToggle(arg_16_0, iter_16_1, function(arg_17_0)
-			if arg_17_0 then
-				arg_16_0.contextData.mapIndex = iter_16_0
+function var_0_0.InitMapsSwitch(arg_17_0)
+	for iter_17_0, iter_17_1 in ipairs(arg_17_0.mapsSwitch) do
+		onToggle(arg_17_0, iter_17_1, function(arg_18_0)
+			if arg_18_0 then
+				arg_17_0.contextData.mapIndex = iter_17_0
 
-				for iter_17_0 = 1, 3 do
-					setActive(arg_16_0.bgs[iter_17_0], iter_17_0 == iter_16_0)
+				for iter_18_0 = 1, 3 do
+					setActive(arg_17_0.bgs[iter_18_0], iter_18_0 == iter_17_0)
 
-					arg_16_0.mapsSwitch[iter_17_0]:GetComponent(typeof(CanvasGroup)).alpha = iter_17_0 == iter_16_0 and 1 or 0.4
+					arg_17_0.mapsSwitch[iter_18_0]:GetComponent(typeof(CanvasGroup)).alpha = iter_18_0 == iter_17_0 and 1 or 0.4
 				end
 
-				if iter_16_0 == 1 then
-					for iter_17_1, iter_17_2 in ipairs(arg_16_0.chapters) do
-						setActive(arg_16_0:findTF("dusk", iter_17_2), iter_16_0 == 2)
-						setActive(arg_16_0:findTF("night", iter_17_2), iter_16_0 == 3)
-						setActive(arg_16_0:findTF("title", iter_17_2), true)
-						setActive(arg_16_0:findTF("title2", iter_17_2), false)
-						onButton(arg_16_0, iter_17_2, function()
-							arg_16_0:OpenChapterLayer(arg_16_0.easyChapters[iter_17_1].id)
+				if iter_17_0 == 1 then
+					for iter_18_1, iter_18_2 in ipairs(arg_17_0.chapters) do
+						setActive(arg_17_0:findTF("dusk", iter_18_2), iter_17_0 == 2)
+						setActive(arg_17_0:findTF("night", iter_18_2), iter_17_0 == 3)
+						setActive(arg_17_0:findTF("title", iter_18_2), true)
+						setActive(arg_17_0:findTF("title2", iter_18_2), false)
+						onButton(arg_17_0, iter_18_2, function()
+							arg_17_0:OpenChapterLayer(arg_17_0.easyChapters[iter_18_1].id)
 						end, SFX_PANEL)
 					end
-				elseif iter_16_0 == 2 then
-					for iter_17_3, iter_17_4 in ipairs(arg_16_0.chapters) do
-						setActive(arg_16_0:findTF("dusk", iter_17_4), iter_16_0 == 2)
-						setActive(arg_16_0:findTF("night", iter_17_4), iter_16_0 == 3)
-						setActive(arg_16_0:findTF("title", iter_17_4), true)
-						setActive(arg_16_0:findTF("title2", iter_17_4), false)
-						onButton(arg_16_0, iter_17_4, function()
-							arg_16_0:OpenChapterLayer(arg_16_0.normalChapters[iter_17_3].id)
+				elseif iter_17_0 == 2 then
+					for iter_18_3, iter_18_4 in ipairs(arg_17_0.chapters) do
+						setActive(arg_17_0:findTF("dusk", iter_18_4), iter_17_0 == 2)
+						setActive(arg_17_0:findTF("night", iter_18_4), iter_17_0 == 3)
+						setActive(arg_17_0:findTF("title", iter_18_4), true)
+						setActive(arg_17_0:findTF("title2", iter_18_4), false)
+						onButton(arg_17_0, iter_18_4, function()
+							arg_17_0:OpenChapterLayer(arg_17_0.normalChapters[iter_18_3].id)
 						end, SFX_PANEL)
 					end
 				else
-					for iter_17_5, iter_17_6 in ipairs(arg_16_0.chapters) do
-						setActive(arg_16_0:findTF("dusk", iter_17_6), iter_16_0 == 2)
-						setActive(arg_16_0:findTF("night", iter_17_6), iter_16_0 == 3)
-						setActive(arg_16_0:findTF("title", iter_17_6), false)
-						setActive(arg_16_0:findTF("title2", iter_17_6), true)
-						onButton(arg_16_0, iter_17_6, function()
-							arg_16_0:OpenChapterLayer(arg_16_0.hardChapters[iter_17_5].id)
+					for iter_18_5, iter_18_6 in ipairs(arg_17_0.chapters) do
+						setActive(arg_17_0:findTF("dusk", iter_18_6), iter_17_0 == 2)
+						setActive(arg_17_0:findTF("night", iter_18_6), iter_17_0 == 3)
+						setActive(arg_17_0:findTF("title", iter_18_6), false)
+						setActive(arg_17_0:findTF("title2", iter_18_6), true)
+						onButton(arg_17_0, iter_18_6, function()
+							arg_17_0:OpenChapterLayer(arg_17_0.hardChapters[iter_18_5].id)
 						end, SFX_PANEL)
 					end
 				end
 
-				setActive(arg_16_0:findTF("dusk", arg_16_0.chapterSp), iter_16_0 == 2)
-				setActive(arg_16_0:findTF("night", arg_16_0.chapterSp), iter_16_0 == 3)
-				GetImageSpriteFromAtlasAsync(pg.item_virtual_data_statistics[arg_16_0.spChapter.enter_cost].icon, "", arg_16_0:findTF("ticket/icon", arg_16_0.chapterSp), false)
+				setActive(arg_17_0:findTF("dusk", arg_17_0.chapterSp), iter_17_0 == 2)
+				setActive(arg_17_0:findTF("night", arg_17_0.chapterSp), iter_17_0 == 3)
+				GetImageSpriteFromAtlasAsync(pg.item_virtual_data_statistics[arg_17_0.spChapter.enter_cost].icon, "", arg_17_0:findTF("ticket/icon", arg_17_0.chapterSp), false)
 
-				arg_16_0.activity = getProxy(ActivityProxy):getActivityById(ActivityConst.Valleyhospital_ACT_ID)
+				arg_17_0.activity = getProxy(ActivityProxy):getActivityById(ActivityConst.Valleyhospital_ACT_ID)
 
-				setText(arg_16_0:findTF("ticket/count", arg_16_0.chapterSp), "X " .. arg_16_0.activity.data1)
-				onButton(arg_16_0, arg_16_0.chapterSp, function()
-					arg_16_0:OpenChapterLayer(arg_16_0.spChapter.id)
+				setText(arg_17_0:findTF("ticket/count", arg_17_0.chapterSp), "X " .. arg_17_0.activity.data1)
+				onButton(arg_17_0, arg_17_0.chapterSp, function()
+					arg_17_0:OpenChapterLayer(arg_17_0.spChapter.id)
 				end, SFX_PANEL)
-				pg.BgmMgr.GetInstance():Push(arg_16_0.__cname, arg_16_0.bgms[arg_16_0.contextData.mapIndex])
+				pg.BgmMgr.GetInstance():Push(arg_17_0.__cname, arg_17_0.bgms[arg_17_0.contextData.mapIndex])
 			end
 		end, SFX_PANEL)
 
-		if arg_16_0.contextData.mapIndex == iter_16_0 then
-			triggerToggle(iter_16_1, true)
+		if arg_17_0.contextData.mapIndex == iter_17_0 then
+			triggerToggle(iter_17_1, true)
 		end
 	end
 end
 
-function var_0_0.OpenChapterLayer(arg_22_0, arg_22_1)
-	arg_22_0:emit(ClueMapMediator.OPEN_STAGE, arg_22_1)
+function var_0_0.OpenChapterLayer(arg_23_0, arg_23_1)
+	arg_23_0:emit(ClueMapMediator.OPEN_STAGE, arg_23_1)
 end
 
-function var_0_0.SubmitClueTask(arg_23_0)
-	if #arg_23_0.submitGroupIds > 0 then
-		local var_23_0 = ActivityConst.Valleyhospital_TASK_ID
+function var_0_0.SubmitClueTask(arg_24_0)
+	if #arg_24_0.submitGroupIds > 0 then
+		local var_24_0 = ActivityConst.Valleyhospital_TASK_ID
 
-		arg_23_0:emit(ClueMapMediator.ON_TASK_SUBMIT_ONESTEP, var_23_0, arg_23_0.canSubmitTaskIds[arg_23_0.submitGroupIds[1]], function(arg_24_0)
-			if arg_24_0 then
-				arg_23_0:UpdateCluePanel()
-				arg_23_0:OpenSingleClueGroupPanel()
+		arg_24_0:emit(ClueMapMediator.ON_TASK_SUBMIT_ONESTEP, var_24_0, arg_24_0.canSubmitTaskIds[arg_24_0.submitGroupIds[1]], function(arg_25_0)
+			if arg_25_0 then
+				arg_24_0:UpdateCluePanel()
+				arg_24_0:OpenSingleClueGroupPanel()
 			end
 		end)
 
-		arg_23_0.showClueGroupId = table.remove(arg_23_0.submitGroupIds, 1)
+		arg_24_0.showClueGroupId = table.remove(arg_24_0.submitGroupIds, 1)
 	end
 end
 
-function var_0_0.OpenSingleClueGroupPanel(arg_25_0)
-	arg_25_0:emit(ClueMapMediator.OPEN_SINGLE_CLUE_GROUP, arg_25_0.showClueGroupId, arg_25_0.submitClueIds[arg_25_0.showClueGroupId], function()
-		arg_25_0:SubmitClueTask()
-		arg_25_0:UpdateCluePanel()
-		setActive(arg_25_0:findTF("tip", arg_25_0.bookBtn), ClueBookLayer.ShouldShowTip())
+function var_0_0.OpenSingleClueGroupPanel(arg_26_0)
+	arg_26_0:emit(ClueMapMediator.OPEN_SINGLE_CLUE_GROUP, arg_26_0.showClueGroupId, arg_26_0.submitClueIds[arg_26_0.showClueGroupId], function()
+		arg_26_0:SubmitClueTask()
+		arg_26_0:UpdateCluePanel()
+		setActive(arg_26_0:findTF("tip", arg_26_0.bookBtn), ClueBookLayer.ShouldShowTip())
 	end)
 end
 
-function var_0_0.willExit(arg_27_0)
+function var_0_0.willExit(arg_28_0)
 	return
 end
 
-function var_0_0.onBackPressed(arg_28_0)
-	arg_28_0:StopBgm()
-	arg_28_0:closeView()
+function var_0_0.onBackPressed(arg_29_0)
+	arg_29_0:StopBgm()
+	arg_29_0:closeView()
 end
 
 return var_0_0
