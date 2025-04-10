@@ -10853,7 +10853,7 @@ pg.base.pay_data_display = {
 		id_str = "com.bilibili.blhx.battlepass23",
 		first_pay_double = 0,
 		extra_gem = 0,
-		descrip = "可获得1500巡游点数，同时解锁特许巡游奖励·反击限定换装和其他奖励",
+		descrip = "可获得1500巡游点数，同时解锁特许巡游奖励·神速限定换装和其他奖励",
 		airijp_id = "com.yostarjp.azurlane.seasonpass22",
 		extra_service_item = {
 			{

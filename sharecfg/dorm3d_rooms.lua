@@ -1,13 +1,14 @@
 pg = pg or {}
 pg.dorm3d_rooms = {
 	{
-		invite_cost = "",
-		room_des = "",
+		invite_icon = "",
+		invite_banner = "",
 		type = 2,
 		resource_name = "Tianlangxing_DB",
 		assets_prefix = "Tianlangxing",
+		invite_cost = "",
 		tag = "",
-		invite_banner = "",
+		room_des = "",
 		scene_info = "map_siriushostel_01|Tianlangxing_DB/SiriusHostel",
 		in_map = "floor_1",
 		room = "天狼星",
@@ -79,13 +80,14 @@ pg.dorm3d_rooms = {
 		}
 	},
 	{
-		invite_cost = "",
-		room_des = "",
+		invite_icon = "",
+		invite_banner = "",
 		type = 2,
 		resource_name = "Nengdai_DB",
 		assets_prefix = "Nengdai",
+		invite_cost = "",
 		tag = "",
-		invite_banner = "",
+		room_des = "",
 		scene_info = "map_noshirohostel_01|Nengdai_DB/Noshirohostel",
 		in_map = "floor_1",
 		room = "能代",
@@ -157,13 +159,14 @@ pg.dorm3d_rooms = {
 		}
 	},
 	{
-		invite_cost = "",
-		room_des = "",
+		invite_icon = "",
+		invite_banner = "",
 		type = 2,
 		resource_name = "Ankeleiqi_DB",
 		assets_prefix = "Ankeleiqi",
+		invite_cost = "",
 		tag = "",
-		invite_banner = "",
+		room_des = "",
 		scene_info = "map_anchoragehostel_01|Ankeleiqi_DB/Anchoragehostel",
 		in_map = "floor_1",
 		room = "安克雷奇",
@@ -318,6 +321,20 @@ pg.dorm3d_rooms = {
 				}
 			}
 		},
+		invite_icon = {
+			{
+				20220,
+				"dorm3dicon/3Ddrom_tianlangxing_FancyGift4"
+			},
+			{
+				30221,
+				"dorm3dicon/3Ddrom_tianlangxing_FancyGift4"
+			},
+			{
+				19903,
+				"dorm3dicon/3Ddrom_tianlangxing_FancyGift4"
+			}
+		},
 		invite_mark = {
 			{
 				20220,
@@ -385,14 +402,15 @@ pg.dorm3d_rooms = {
 		type = 1,
 		ar_anim = "",
 		room_bgm = "story-room-sirius",
-		invite_banner = "",
+		room_des = "",
 		scene_info = "",
 		in_map = "floor_1",
 		room = "浴室",
 		invite_mark = "",
 		tag = "",
 		furniture_zones = "",
-		room_des = "",
+		invite_icon = "",
+		invite_banner = "",
 		assets_prefix = "Bathroom",
 		id = 5,
 		character = {
