@@ -6,13 +6,14 @@ var_0_0.OPEN_ROOM_UNLOCK_WINDOW = "Dorm3dShopMediator.OPEN_ROOM_UNLOCK_WINDOW"
 var_0_0.OPEN_DROP_LAYER = "Dorm3dShopMediator.OPEN_DROP_LAYER"
 
 function var_0_0.register(arg_1_0)
-	arg_1_0:bind(var_0_0.OPEN_DETAIL, function(arg_2_0, arg_2_1, arg_2_2)
+	arg_1_0:bind(var_0_0.OPEN_DETAIL, function(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 		arg_1_0:addSubLayers(Context.New({
 			viewComponent = Dorm3dShopDetailWindow,
 			mediator = Dorm3dShopDetailMediator,
 			data = {
 				shopCfg = arg_2_1,
-				changeCount = arg_2_2
+				groupId = arg_2_2,
+				changeCount = arg_2_3
 			}
 		}))
 	end)

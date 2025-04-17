@@ -22644,7 +22644,7 @@ _G.pg.base.spweapon_data_statistics[13470] = {
 
 _G.pg.base.spweapon_data_statistics[13480] = {
 	tech = 0,
-	name = "仲裁之枪 ",
+	name = "仲裁之枪",
 	value_2_random = 5,
 	type = 4,
 	value_1_random = 10,

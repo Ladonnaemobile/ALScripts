@@ -167909,6 +167909,54 @@ _G.pg.base.item_virtual_data_statistics[65086] = {
 	combination_display = {}
 }
 
+_G.pg.base.item_virtual_data_statistics[65088] = {
+	display = "于「极地风暴」活动限时复刻中获取，可以免费进行一次期间限定建造（活动结束后消失）",
+	name = "单次建造券",
+	max_num = 0,
+	type = 0,
+	time_limit = 0,
+	rarity = 4,
+	shop_id = -1,
+	replace_item = 0,
+	drop_gold_max = 0,
+	drop_oil_max = 0,
+	link_id = 5896,
+	virtual_type = 22,
+	is_world = 0,
+	icon = "Props/buildTicket",
+	id = 65088,
+	order = 0,
+	display_icon = {},
+	price = {},
+	index = {},
+	shiptrans_id = {},
+	combination_display = {}
+}
+
+_G.pg.base.item_virtual_data_statistics[65090] = {
+	display = "用于「极地风暴」复刻活动兑换，活动结束后将会消失",
+	name = "极地风暴Pt",
+	max_num = 0,
+	type = 98,
+	time_limit = 0,
+	rarity = 2,
+	shop_id = -1,
+	replace_item = 0,
+	drop_gold_max = 0,
+	drop_oil_max = 0,
+	link_id = 300001,
+	virtual_type = 0,
+	is_world = 0,
+	icon = "Props/jidifengbao_pt",
+	id = 65090,
+	order = 0,
+	display_icon = {},
+	price = {},
+	index = {},
+	shiptrans_id = {},
+	combination_display = {}
+}
+
 _G.pg.base.item_virtual_data_statistics[65500] = {
 	display = "铁血抵抗军颁发的纪念勋章，纪念那场对抗星之兽的伟大胜利。\n——我们今日不会毁灭，这个世界亦然，致明日。",
 	name = "抵抗之星纪念勋章",

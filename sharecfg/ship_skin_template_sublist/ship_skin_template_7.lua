@@ -921,6 +921,7 @@ pg.base.ship_skin_template_7 = {
 		group_index = 1,
 		l2d_ignore_drag = 0,
 		painting = "yuanchou_2",
+		shop_id = 70822,
 		illustrator = -1,
 		l2d_voice_calibrate = "",
 		shop_type_id = 4,
@@ -935,7 +936,7 @@ pg.base.ship_skin_template_7 = {
 		prefab = "yuanchou_2",
 		l2d_se = "",
 		main_UI_FX = "",
-		shop_id = 70822,
+		special_effects = "",
 		desc = "呼…让您看到难堪的一面了，实在是不好意思。……有空的话，来帮我收拾一下吧。“趁其他人来这里之前”…好吗？",
 		voice_actor = 356,
 		change_skin = "",
@@ -1010,23 +1011,12 @@ pg.base.ship_skin_template_7 = {
 		},
 		spine_offset = {
 			{
-				-76,
-				-710,
+				-129,
+				-890,
 				0
 			},
 			{
-				1.4
-			}
-		},
-		special_effects = {
-			"lihui_yuanchou_2",
-			{
-				456,
-				822,
-				0
-			},
-			{
-				1.1
+				1.7
 			}
 		}
 	},

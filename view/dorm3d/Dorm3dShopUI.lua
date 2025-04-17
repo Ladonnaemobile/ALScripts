@@ -942,86 +942,92 @@ function var_0_0.ClickCommodity(arg_36_0, arg_36_1)
 		end
 
 		if var_36_7 > 1 then
-			arg_36_0:emit(Dorm3dShopMediator.OPEN_DETAIL, arg_36_1, function(arg_38_0)
+			local var_36_11 = 0
+
+			if arg_36_0.selectedId ~= 0 then
+				var_36_11 = var_0_4[arg_36_0.selectedId].character[1]
+			end
+
+			arg_36_0:emit(Dorm3dShopMediator.OPEN_DETAIL, arg_36_1, var_36_11, function(arg_38_0)
 				arg_36_0.showCount = arg_38_0
 			end)
 		else
-			local var_36_11 = Dorm3dGift.New({
+			local var_36_12 = Dorm3dGift.New({
 				configId = arg_36_1.item_id
 			})
-			local var_36_12 = CommonCommodity.New({
-				id = var_36_11:GetShopID()
+			local var_36_13 = CommonCommodity.New({
+				id = var_36_12:GetShopID()
 			}, Goods.TYPE_SHOPSTREET)
-			local var_36_13, var_36_14, var_36_15 = var_36_12:GetPrice()
-			local var_36_16 = Drop.New({
+			local var_36_14, var_36_15, var_36_16 = var_36_13:GetPrice()
+			local var_36_17 = Drop.New({
 				type = DROP_TYPE_RESOURCE,
-				id = var_36_12:GetResType(),
-				count = var_36_13
+				id = var_36_13:GetResType(),
+				count = var_36_14
 			})
-			local var_36_17
-			local var_36_18 = 0
+			local var_36_18
+			local var_36_19 = 0
 
-			_.each(var_36_11:getConfig("shop_id"), function(arg_39_0)
+			_.each(var_36_12:getConfig("shop_id"), function(arg_39_0)
 				local var_39_0 = var_0_3[arg_39_0]
 
 				if var_39_0.group_type == 2 then
-					var_36_18 = math.max(var_39_0.group_limit, var_36_18)
+					var_36_19 = math.max(var_39_0.group_limit, var_36_19)
 				end
 			end)
 
-			if var_36_18 > 0 then
-				var_36_17 = {
-					getProxy(ApartmentProxy):GetGiftShopCount(var_36_11:GetConfigID()),
-					var_36_18
+			if var_36_19 > 0 then
+				var_36_18 = {
+					getProxy(ApartmentProxy):GetGiftShopCount(var_36_12:GetConfigID()),
+					var_36_19
 				}
 			end
 
 			arg_36_0:emit(Dorm3dShopMediator.SHOW_SHOPPING_CONFIRM_WINDOW, {
 				content = {
-					icon = "<icon name=" .. var_36_12:GetResIcon() .. " w=1.1 h=1.1/>",
-					off = var_36_14,
-					cost = var_36_16.count,
-					old = var_36_15,
+					icon = "<icon name=" .. var_36_13:GetResIcon() .. " w=1.1 h=1.1/>",
+					off = var_36_15,
+					cost = var_36_17.count,
+					old = var_36_16,
 					name = arg_36_1.name,
-					weekLimit = var_36_17
+					weekLimit = var_36_18
 				},
 				tip = i18n("dorm3d_shop_gift_tip"),
-				drop = var_36_11,
+				drop = var_36_12,
 				groupId = arg_36_1.room_id,
 				onYes = function()
 					arg_36_0:emit(GAME.SHOPPING, {
 						silentTip = true,
 						count = 1,
-						shopId = var_36_11:GetShopID()
+						shopId = var_36_12:GetShopID()
 					})
 				end
 			})
 		end
 	elseif arg_36_1.type == 3 then
-		local var_36_19
-		local var_36_20 = getProxy(ApartmentProxy):getRoom(arg_36_1.item_id)
+		local var_36_20
+		local var_36_21 = getProxy(ApartmentProxy):getRoom(arg_36_1.item_id)
 
-		if not var_36_20 then
+		if not var_36_21 then
 			pg.TipsMgr.GetInstance():ShowTips(i18n("dorm3d_role_locked"))
 
 			return
 		end
 
-		if not var_36_20.unlockCharacter[arg_36_1.room_id] then
-			var_36_19 = "lock"
+		if not var_36_21.unlockCharacter[arg_36_1.room_id] then
+			var_36_20 = "lock"
 		elseif not getProxy(ApartmentProxy):getApartment(arg_36_1.room_id) then
-			var_36_19 = "room"
+			var_36_20 = "room"
 		elseif Apartment.New({
 			ship_group = arg_36_1.room_id
 		}):needDownload() then
-			var_36_19 = "download"
+			var_36_20 = "download"
 		end
 
-		if var_36_19 == "lock" then
+		if var_36_20 == "lock" then
 			arg_36_0:emit(Dorm3dShopMediator.OPEN_ROOM_UNLOCK_WINDOW, arg_36_1.item_id, arg_36_1.room_id)
-		elseif var_36_19 == "room" then
+		elseif var_36_20 == "room" then
 			pg.TipsMgr.GetInstance():ShowTips(i18n("dorm3d_role_locked"))
-		elseif var_36_19 == "download" then
+		elseif var_36_20 == "download" then
 			pg.TipsMgr.GetInstance():ShowTips(i18n("dorm3d_guide_beach_tip"))
 		end
 	end
@@ -1042,10 +1048,7 @@ function var_0_0.SetBubbles(arg_41_0, arg_41_1, arg_41_2)
 				setActive(arg_42_2:Find("bubble"), arg_43_0)
 				setActive(arg_41_0.mask, arg_43_0)
 				onButton(arg_41_0, arg_41_0.mask, function()
-					setActive(arg_42_2:Find("icon/select"), false)
-					setActive(arg_42_2:Find("icon/unselect"), true)
-					setActive(arg_42_2:Find("bubble"), false)
-					setActive(arg_41_0.mask, false)
+					triggerToggle(arg_42_2, false)
 				end, SFX_PANEL)
 			end)
 		end
