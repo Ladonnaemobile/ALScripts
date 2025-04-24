@@ -182,7 +182,8 @@ local var_0_0 = {
 		{
 			types = {
 				Nation.CM,
-				Nation.MOT
+				Nation.MOT,
+				Nation.NL
 			}
 		}
 	},
