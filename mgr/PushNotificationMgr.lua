@@ -74,19 +74,21 @@ function var_0_1.Push(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
 	local var_7_0 = arg_7_3 - var_0_0.TimeMgr.GetInstance():GetServerTime()
 	local var_7_1 = os.time() + var_7_0
 
-	NotificationMgr.Inst:ScheduleLocalNotification(arg_7_1, arg_7_2, var_7_1)
+	YSNormalTool.NotificationTool.SendBySecondWithIcon(arg_7_1, arg_7_2, var_7_0)
 	arg_7_0:log(arg_7_1, arg_7_2, var_7_1)
 end
 
 function var_0_1.cancelAll(arg_8_0)
-	NotificationMgr.Inst:CancelAllLocalNotifications()
+	YSNormalTool.NotificationTool.CancelAllNotification()
 end
 
 function var_0_1.PushAll(arg_9_0)
 	local var_9_0 = getProxy(PlayerProxy)
 
 	if var_9_0 and var_9_0:getInited() then
-		arg_9_0:cancelAll()
+		if not PUSH_NOTIFICATION_TEST_TAG then
+			arg_9_0:cancelAll()
+		end
 
 		if var_0_2[var_0_1.PUSH_TYPE_EVENT] then
 			arg_9_0:PushEvent()

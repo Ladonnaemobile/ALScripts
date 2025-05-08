@@ -164,12 +164,12 @@ function var_0_0.SetRoom(arg_9_0, arg_9_1)
 end
 
 function var_0_0.preload(arg_10_0, arg_10_1)
-	tolua.loadassembly("MagicaCloth")
+	tolua.loadassembly("MagicaClothV2")
 	tolua.loadassembly("ParadoxNotion")
+	tolua.loadassembly("Yongshi.BLRP.Runtime")
 
 	for iter_10_0, iter_10_1 in pairs({
-		_MonoManager = "ParadoxNotion.Services.MonoManager",
-		MagicaPhysicsManager = "MagicaCloth.MagicaPhysicsManager"
+		_MonoManager = "ParadoxNotion.Services.MonoManager"
 	}) do
 		if not GameObject.Find(iter_10_0) then
 			local var_10_0 = GameObject.New(iter_10_0)
@@ -183,7 +183,7 @@ function var_0_0.preload(arg_10_0, arg_10_1)
 	local var_10_1 = {}
 
 	table.insert(var_10_1, function(arg_11_0)
-		arg_10_0.dormSceneMgr = Dorm3dSceneMgr.New(string.lower(arg_10_0.room:getConfig("scene_info")), arg_11_0)
+		arg_10_0.dormSceneMgr = Dorm3dSceneMgr.New(arg_10_0.room:getConfig("scene_info"), arg_11_0)
 	end)
 	table.insert(var_10_1, function(arg_12_0)
 		arg_10_0:LoadCharacter(arg_10_0.contextData.groupIds, arg_12_0)
@@ -502,7 +502,7 @@ function var_0_0.initScene(arg_39_0)
 		arg_39_0.restrictedBox:Find("Celling").position.y - var_39_5
 	}
 	arg_39_0.ladyInterest = GameObject.Find("InterestProxy").transform
-	arg_39_0.daynightCtrlComp = GameObject.Find("[MainBlock]").transform:GetComponent(typeof(DayNightCtrl))
+	arg_39_0.daynightCtrlComp = GameObject.Find("[MainBlock]").transform:GetComponent("DayNightCtrl")
 
 	arg_39_0:SwitchDayNight(arg_39_0.contextData.timeIndex)
 
@@ -612,7 +612,7 @@ end
 
 function var_0_0.InitSlots(arg_49_0)
 	local var_49_0 = arg_49_0.room:GetSlots()
-	local var_49_1 = arg_49_0.modelRoot:GetComponentsInChildren(typeof(Transform), true)
+	local var_49_1 = arg_49_0.modelRoot:GetComponentsInChildren(typeof(Transform), true):ToTable()
 
 	arg_49_0.slotDict = {}
 
@@ -642,11 +642,9 @@ function var_0_0.InitSlots(arg_49_0)
 
 		local var_50_5
 
-		for iter_50_0 = 0, var_49_1.Length - 1 do
-			local var_50_6 = var_49_1[iter_50_0]
-
-			if var_50_6.name == var_50_0 then
-				var_50_5 = var_50_6
+		for iter_50_0, iter_50_1 in ipairs(var_49_1) do
+			if iter_50_1.name == var_50_0 then
+				var_50_5 = iter_50_1
 
 				break
 			end
@@ -664,805 +662,792 @@ function var_0_0.SetContactStateDic(arg_52_0, arg_52_1)
 	arg_52_0.contactStateDic = arg_52_1
 	arg_52_0.hideContactStateDic = {}
 	arg_52_0.contactInRangeDic = {}
+	arg_52_0.transRangeDic = {
+		list = {}
+	}
+	arg_52_0.transformFilter = arg_52_0.transformFilter or BLHX.Rendering.TransformFilter.New()
 
 	for iter_52_0, iter_52_1 in pairs(arg_52_0.contactStateDic) do
 		arg_52_0.hideContactStateDic[iter_52_0] = math.min(iter_52_1, ApartmentRoom.ITEM_UNLOCK)
 		arg_52_0.contactInRangeDic[iter_52_0] = false
+
+		local var_52_0 = pg.dorm3d_collection_template[iter_52_0].vfx_prefab
+
+		arg_52_0.transRangeDic[iter_52_0] = {
+			#arg_52_0.transRangeDic.list + 1,
+			#var_52_0
+		}
+
+		table.insertto(arg_52_0.transRangeDic.list, underscore.map(var_52_0, function(arg_53_0)
+			return arg_52_0.modelRoot:Find(arg_53_0)
+		end))
 	end
 
+	arg_52_0.transformFilter:Init(arg_52_0.mainCameraTF, arg_52_0.transRangeDic.list, 2, 60)
 	arg_52_0:ActiveContact()
 end
 
-function var_0_0.TempHideContact(arg_53_0, arg_53_1)
-	arg_53_0.hideConcatFlag = arg_53_1
+function var_0_0.TempHideContact(arg_54_0, arg_54_1)
+	arg_54_0.hideConcatFlag = arg_54_1
 
-	arg_53_0:ActiveContact()
+	arg_54_0:ActiveContact()
 end
 
-function var_0_0.ActiveContact(arg_54_0)
-	for iter_54_0, iter_54_1 in pairs(arg_54_0.contactInRangeDic) do
-		arg_54_0:UpdateContactDisplay(iter_54_0, arg_54_0.contactInRangeDic[iter_54_0] and not arg_54_0.hideConcatFlag and arg_54_0.contactStateDic[iter_54_0] or arg_54_0.hideContactStateDic[iter_54_0])
+function var_0_0.ActiveContact(arg_55_0)
+	for iter_55_0, iter_55_1 in pairs(arg_55_0.contactInRangeDic) do
+		arg_55_0:UpdateContactDisplay(iter_55_0, arg_55_0.contactInRangeDic[iter_55_0] and not arg_55_0.hideConcatFlag and arg_55_0.contactStateDic[iter_55_0] or arg_55_0.hideContactStateDic[iter_55_0])
 	end
 end
 
-function var_0_0.UpdateContactDisplay(arg_55_0, arg_55_1, arg_55_2)
-	local var_55_0 = pg.dorm3d_collection_template[arg_55_1]
+function var_0_0.UpdateContactDisplay(arg_56_0, arg_56_1, arg_56_2)
+	local var_56_0 = pg.dorm3d_collection_template[arg_56_1]
 
-	for iter_55_0, iter_55_1 in ipairs(var_55_0.vfx_prefab) do
-		local var_55_1 = arg_55_0.modelRoot:Find(iter_55_1)
+	for iter_56_0, iter_56_1 in ipairs(var_56_0.vfx_prefab) do
+		local var_56_1 = arg_56_0.modelRoot:Find(iter_56_1)
 
-		if arg_55_0:IsModeInHidePending(iter_55_1) then
+		if arg_56_0:IsModeInHidePending(iter_56_1) then
 			-- block empty
-		elseif not arg_55_0.modelRoot:Find(iter_55_1) then
-			warning(arg_55_1, iter_55_1)
+		elseif not arg_56_0.modelRoot:Find(iter_56_1) then
+			warning(arg_56_1, iter_56_1)
 		else
-			setActive(var_55_1, arg_55_2 == ApartmentRoom.ITEM_FIRST)
+			setActive(var_56_1, arg_56_2 == ApartmentRoom.ITEM_FIRST)
 		end
 	end
 
-	for iter_55_2, iter_55_3 in ipairs(var_55_0.model) do
-		if arg_55_0:IsModeInHidePending(iter_55_3) then
+	for iter_56_2, iter_56_3 in ipairs(var_56_0.model) do
+		if arg_56_0:IsModeInHidePending(iter_56_3) then
 			-- block empty
-		elseif not arg_55_0.modelRoot:Find(iter_55_3) then
-			warning(arg_55_1, iter_55_3)
+		elseif not arg_56_0.modelRoot:Find(iter_56_3) then
+			warning(arg_56_1, iter_56_3)
 		else
-			local var_55_2 = arg_55_0.modelRoot:Find(iter_55_3)
+			local var_56_2 = arg_56_0.modelRoot:Find(iter_56_3)
 
-			if arg_55_0:CheckSceneItemActive(var_55_2) then
-				local var_55_3 = GetComponent(var_55_2, typeof(EventTriggerListener))
+			if arg_56_0:CheckSceneItemActive(var_56_2) then
+				local var_56_3 = GetComponent(var_56_2, typeof(EventTriggerListener))
 
-				if arg_55_2 == ApartmentRoom.ITEM_FIRST then
-					var_55_3 = var_55_3 or GetOrAddComponent(var_55_2, typeof(EventTriggerListener))
+				if arg_56_2 == ApartmentRoom.ITEM_FIRST then
+					var_56_3 = var_56_3 or GetOrAddComponent(var_56_2, typeof(EventTriggerListener))
 
-					var_55_3:AddPointClickFunc(function(arg_56_0, arg_56_1)
-						arg_55_0:emit(var_0_0.CLICK_CONTACT, arg_55_1)
+					var_56_3:AddPointClickFunc(function(arg_57_0, arg_57_1)
+						arg_56_0:emit(var_0_0.CLICK_CONTACT, arg_56_1)
 					end)
 
-					var_55_3.enabled = true
-				elseif var_55_3 then
-					var_55_3.enabled = false
+					var_56_3.enabled = true
+				elseif var_56_3 then
+					var_56_3.enabled = false
 				end
 
-				setActive(var_55_2, arg_55_2 > ApartmentRoom.ITEM_LOCK)
+				setActive(var_56_2, arg_56_2 > ApartmentRoom.ITEM_LOCK)
 			end
 		end
 	end
 end
 
-function var_0_0.SetFloatEnable(arg_57_0, arg_57_1)
-	arg_57_0.enableFloatUpdate = arg_57_1
+function var_0_0.SetFloatEnable(arg_58_0, arg_58_1)
+	arg_58_0.enableFloatUpdate = arg_58_1
 
-	if arg_57_1 then
-		arg_57_0.ladyDict[arg_57_0.apartment:GetConfigID()]:UpdateFloatPosition()
+	if arg_58_1 then
+		arg_58_0.ladyDict[arg_58_0.apartment:GetConfigID()]:UpdateFloatPosition()
 	end
 end
 
-function var_0_0.UpdateFloatPosition(arg_58_0)
-	local var_58_0 = arg_58_0.ladyDict[arg_58_0.apartment:GetConfigID()]
-	local var_58_1 = arg_58_0:GetScreenPosition(var_58_0.ladyHeadCenter.position + Vector3(0, 0.2, 0))
-	local var_58_2 = arg_58_0:GetLocalPosition(var_58_1, arg_58_0.rtFloatPage)
+function var_0_0.UpdateFloatPosition(arg_59_0)
+	local var_59_0 = arg_59_0.ladyDict[arg_59_0.apartment:GetConfigID()]
+	local var_59_1 = arg_59_0:GetScreenPosition(var_59_0.ladyHeadCenter.position + Vector3(0, 0.2, 0))
+	local var_59_2 = arg_59_0:GetLocalPosition(var_59_1, arg_59_0.rtFloatPage)
 
-	setLocalPosition(arg_58_0.rtFloatPage:Find("lady"), var_58_2)
+	setLocalPosition(arg_59_0.rtFloatPage:Find("lady"), var_59_2)
 end
 
-function var_0_0.LoadCharacter(arg_59_0, arg_59_1, arg_59_2)
-	arg_59_0.hxMatDict = {}
-	arg_59_0.ladyDict = {}
-	arg_59_0.skinDict = {}
+function var_0_0.LoadCharacter(arg_60_0, arg_60_1, arg_60_2)
+	arg_60_0.hxMatDict = {}
+	arg_60_0.ladyDict = {}
+	arg_60_0.skinDict = {}
 
-	local var_59_0 = {}
+	local var_60_0 = {}
 
-	for iter_59_0, iter_59_1 in ipairs(arg_59_1) do
-		local var_59_1 = setmetatable({}, {
-			__index = arg_59_0
+	for iter_60_0, iter_60_1 in ipairs(arg_60_1) do
+		local var_60_1 = setmetatable({}, {
+			__index = arg_60_0
 		})
 
-		arg_59_0.ladyDict[iter_59_1] = var_59_1
+		arg_60_0.ladyDict[iter_60_1] = var_60_1
 
-		local var_59_2 = getProxy(ApartmentProxy):getApartment(iter_59_1)
-		local var_59_3 = var_59_2:getConfig("asset_name")
-		local var_59_4 = var_59_2:GetSkinModelID(arg_59_0.room:getConfig("tag"))
-		local var_59_5 = pg.dorm3d_resource[var_59_4].model_id
+		local var_60_2 = getProxy(ApartmentProxy):getApartment(iter_60_1)
+		local var_60_3 = var_60_2:getConfig("asset_name")
+		local var_60_4 = var_60_2:GetSkinModelID(arg_60_0.room:getConfig("tag"))
+		local var_60_5 = pg.dorm3d_resource[var_60_4].model_id
 
-		assert(var_59_5)
+		assert(var_60_5)
 
-		for iter_59_2, iter_59_3 in ipairs({
+		for iter_60_2, iter_60_3 in ipairs({
 			"common",
-			var_59_5
+			var_60_5
 		}) do
-			local var_59_6 = string.format("dorm3d/character/%s/res/%s", var_59_3, iter_59_3)
+			local var_60_6 = string.format("dorm3d/character/%s/res/%s", var_60_3, iter_60_3)
 
-			if checkABExist(var_59_6) then
-				table.insert(var_59_0, function(arg_60_0)
-					arg_59_0.loader:LoadBundle(var_59_6, function(arg_61_0)
-						for iter_61_0, iter_61_1 in ipairs(arg_61_0:GetAllAssetNames()) do
-							local var_61_0, var_61_1, var_61_2 = string.find(iter_61_1, "material_hx[/\\](.*).mat")
+			if checkABExist(var_60_6) then
+				table.insert(var_60_0, function(arg_61_0)
+					arg_60_0.loader:LoadBundle(var_60_6, function(arg_62_0)
+						for iter_62_0, iter_62_1 in ipairs(arg_62_0:GetAllAssetNames()) do
+							local var_62_0, var_62_1, var_62_2 = string.find(iter_62_1, "material_hx[/\\](.*).mat")
 
-							if var_61_0 then
-								arg_59_0.hxMatDict[var_61_2] = {
-									arg_61_0,
-									iter_61_1
+							if var_62_0 then
+								arg_60_0.hxMatDict[var_62_2] = {
+									arg_62_0,
+									iter_62_1
 								}
 							end
 						end
 
-						arg_60_0()
+						arg_61_0()
 					end)
 				end)
 			end
 		end
 
-		var_59_1.skinId = var_59_4
-		var_59_1.skinIdList = {
-			var_59_4
+		var_60_1.skinId = var_60_4
+		var_60_1.skinIdList = {
+			var_60_4
 		}
 
-		table.insert(var_59_0, function(arg_62_0)
-			local var_62_0 = string.format("dorm3d/character/%s/prefabs/%s", var_59_3, var_59_5)
+		table.insert(var_60_0, function(arg_63_0)
+			local var_63_0 = string.format("dorm3d/character/%s/prefabs/%s", var_60_3, var_60_5)
 
-			arg_59_0.loader:GetPrefab(var_62_0, "", function(arg_63_0)
-				var_59_1.ladyGameobject = arg_63_0
-				arg_59_0.skinDict[var_59_4] = {
-					ladyGameobject = arg_63_0
+			arg_60_0.loader:GetPrefab(var_63_0, "", function(arg_64_0)
+				var_60_1.ladyGameobject = arg_64_0
+				arg_60_0.skinDict[var_60_4] = {
+					ladyGameobject = arg_64_0
 				}
 
-				arg_62_0()
+				arg_63_0()
 			end)
 		end)
 
-		if arg_59_0.room:isPersonalRoom() then
-			local var_59_7 = var_59_2:GetSkinModelID("touch")
+		if arg_60_0.room:isPersonalRoom() then
+			local var_60_7 = var_60_2:GetSkinModelID("touch")
 
-			if var_59_7 then
-				local var_59_8 = pg.dorm3d_resource[var_59_7].model_id
-				local var_59_9 = string.format("dorm3d/character/%s/prefabs/%s", var_59_3, var_59_8)
+			if var_60_7 then
+				local var_60_8 = pg.dorm3d_resource[var_60_7].model_id
+				local var_60_9 = string.format("dorm3d/character/%s/prefabs/%s", var_60_3, var_60_8)
 
-				if #var_59_8 > 0 and checkABExist(var_59_9) then
-					table.insert(var_59_1.skinIdList, var_59_7)
-					table.insert(var_59_0, function(arg_64_0)
-						arg_59_0.loader:GetPrefab(var_59_9, "", function(arg_65_0)
-							arg_59_0.skinDict[var_59_7] = {
-								ladyGameobject = arg_65_0
+				if #var_60_8 > 0 and checkABExist(var_60_9) then
+					table.insert(var_60_1.skinIdList, var_60_7)
+					table.insert(var_60_0, function(arg_65_0)
+						arg_60_0.loader:GetPrefab(var_60_9, "", function(arg_66_0)
+							arg_60_0.skinDict[var_60_7] = {
+								ladyGameobject = arg_66_0
 							}
-							GetComponent(arg_65_0, "GraphOwner").enabled = false
+							GetComponent(arg_66_0, "GraphOwner").enabled = false
 
 							onNextTick(function()
-								setActive(arg_65_0, false)
+								setActive(arg_66_0, false)
 							end)
-							arg_64_0()
+							arg_65_0()
 						end)
 					end)
 				end
 			end
 		end
 
-		if arg_59_0.contextData.pendingDic[iter_59_1] then
-			local var_59_10 = pg.dorm3d_welcome[arg_59_0.contextData.pendingDic[iter_59_1]]
+		if arg_60_0.contextData.pendingDic[iter_60_1] then
+			local var_60_10 = pg.dorm3d_welcome[arg_60_0.contextData.pendingDic[iter_60_1]]
 
-			if var_59_10.item_prefab ~= "" then
-				table.insert(var_59_0, function(arg_67_0)
-					local var_67_0 = string.lower("dorm3d/furniture/item/" .. var_59_10.item_prefab)
+			if var_60_10.item_prefab ~= "" then
+				table.insert(var_60_0, function(arg_68_0)
+					local var_68_0 = string.lower("dorm3d/furniture/item/" .. var_60_10.item_prefab)
 
-					arg_59_0.loader:GetPrefab(var_67_0, "", function(arg_68_0)
-						var_59_1.tfPendintItem = arg_68_0.transform
+					arg_60_0.loader:GetPrefab(var_68_0, "", function(arg_69_0)
+						var_60_1.tfPendintItem = arg_69_0.transform
 
 						onNextTick(function()
-							setActive(arg_68_0, false)
+							setActive(arg_69_0, false)
 						end)
-						arg_67_0()
+						arg_68_0()
 					end)
 				end)
 			end
 		end
 	end
 
-	parallelAsync(var_59_0, arg_59_2)
+	parallelAsync(var_60_0, arg_60_2)
 end
 
-function var_0_0.HXCharacter(arg_70_0, arg_70_1)
+function var_0_0.HXCharacter(arg_71_0, arg_71_1)
 	if not HXSet.isHx() then
 		return
 	end
 
-	local var_70_0 = arg_70_1:GetComponentsInChildren(typeof(SkinnedMeshRenderer), true)
+	local var_71_0 = arg_71_1:GetComponentsInChildren(typeof(SkinnedMeshRenderer), true)
 
-	table.IpairsCArray(var_70_0, function(arg_71_0, arg_71_1)
-		local var_71_0 = arg_71_1.sharedMaterials
-		local var_71_1 = false
+	table.IpairsCArray(var_71_0, function(arg_72_0, arg_72_1)
+		local var_72_0 = arg_72_1.sharedMaterials
+		local var_72_1 = false
 
-		table.IpairsCArray(var_71_0, function(arg_72_0, arg_72_1)
-			if arg_72_1 == nil then
+		table.IpairsCArray(var_72_0, function(arg_73_0, arg_73_1)
+			if arg_73_1 == nil then
 				return
 			end
 
-			local var_72_0 = arg_72_1.name
+			local var_73_0 = arg_73_1.name
 
-			if not arg_70_0.hxMatDict[var_72_0] then
+			if not arg_71_0.hxMatDict[var_73_0] then
 				return
 			end
 
-			var_71_1 = true
+			var_72_1 = true
 
-			local var_72_1, var_72_2 = unpack(arg_70_0.hxMatDict[var_72_0])
-			local var_72_3 = var_72_1:LoadAssetSync(var_72_2, typeof(Material), false, false)
+			local var_73_1, var_73_2 = unpack(arg_71_0.hxMatDict[var_73_0])
+			local var_73_3 = var_73_1:LoadAssetSync(var_73_2, typeof(Material), false, false)
 
-			var_71_0[arg_72_0] = var_72_3
+			var_72_0[arg_73_0] = var_73_3
 
-			warning("Replace HX Material", arg_70_0.hxMatDict[var_72_0][2])
+			warning("Replace HX Material", arg_71_0.hxMatDict[var_73_0][2])
 		end)
 
-		if var_71_1 then
-			arg_71_1.sharedMaterials = var_71_0
+		if var_72_1 then
+			arg_72_1.sharedMaterials = var_72_0
 		end
 	end)
 end
 
-function var_0_0.InitCharacter(arg_73_0, arg_73_1, arg_73_2)
-	arg_73_1.lady = arg_73_1.ladyGameobject.transform
+function var_0_0.InitCharacter(arg_74_0, arg_74_1, arg_74_2)
+	arg_74_1.lady = arg_74_1.ladyGameobject.transform
 
-	arg_73_1.lady:SetParent(arg_73_1.mainCameraTF)
-	arg_73_1.lady:SetParent(nil)
+	arg_74_1.lady:SetParent(arg_74_1.mainCameraTF)
+	arg_74_1.lady:SetParent(nil)
 
-	arg_73_1.ladyHeadIKComp = arg_73_1.lady:GetComponent(typeof(HeadAimIK))
-	arg_73_1.ladyHeadIKComp.AimTarget = arg_73_1.mainCameraTF:Find("AimTarget")
-	arg_73_1.ladyHeadIKData = {
-		DampTime = arg_73_1.ladyHeadIKComp.DampTime,
-		blinkSpeed = arg_73_1.ladyHeadIKComp.blinkSpeed,
-		BodyWeight = arg_73_1.ladyHeadIKComp.BodyWeight,
-		HeadWeight = arg_73_1.ladyHeadIKComp.HeadWeight
+	arg_74_1.ladyHeadIKComp = arg_74_1.lady:GetComponent(typeof(HeadAimIK))
+	arg_74_1.ladyHeadIKComp.AimTarget = arg_74_1.mainCameraTF:Find("AimTarget")
+	arg_74_1.ladyHeadIKData = {
+		DampTime = arg_74_1.ladyHeadIKComp.DampTime,
+		blinkSpeed = arg_74_1.ladyHeadIKComp.blinkSpeed,
+		BodyWeight = arg_74_1.ladyHeadIKComp.BodyWeight,
+		HeadWeight = arg_74_1.ladyHeadIKComp.HeadWeight
 	}
 
-	local var_73_0 = {}
+	local var_74_0 = {}
 
-	table.Foreach(var_0_1, function(arg_74_0, arg_74_1)
-		var_73_0[arg_74_1] = arg_74_0
+	table.Foreach(var_0_1, function(arg_75_0, arg_75_1)
+		var_74_0[arg_75_1] = arg_75_0
 	end)
 
-	arg_73_1.ladyAnimator = arg_73_1.lady:GetComponent(typeof(Animator))
-	arg_73_1.ladyAnimBaseLayerIndex = arg_73_1.ladyAnimator:GetLayerIndex("Base Layer")
-	arg_73_1.ladyAnimFaceLayerIndex = arg_73_1.ladyAnimator:GetLayerIndex("Face")
-	arg_73_1.ladyBoneMaps = {}
+	arg_74_1.ladyAnimator = arg_74_1.lady:GetComponent(typeof(Animator))
+	arg_74_1.ladyAnimBaseLayerIndex = arg_74_1.ladyAnimator:GetLayerIndex("Base Layer")
+	arg_74_1.ladyAnimFaceLayerIndex = arg_74_1.ladyAnimator:GetLayerIndex("Face")
+	arg_74_1.ladyBoneMaps = {}
 
-	local var_73_1 = arg_73_1.lady:GetComponentsInChildren(typeof(Transform), true)
+	local var_74_1 = arg_74_1.lady:GetComponentsInChildren(typeof(Transform), true)
 
-	table.IpairsCArray(var_73_1, function(arg_75_0, arg_75_1)
-		if arg_75_1.name == "BodyCollider" then
-			arg_73_1.ladyCollider = arg_75_1
+	table.IpairsCArray(var_74_1, function(arg_76_0, arg_76_1)
+		if arg_76_1.name == "BodyCollider" then
+			arg_74_1.ladyCollider = arg_76_1
 
-			setActive(arg_75_1, true)
-		elseif arg_75_1.name == "SafeCollider" then
-			arg_73_1.ladySafeCollider = arg_75_1
+			setActive(arg_76_1, true)
+		elseif arg_76_1.name == "SafeCollider" then
+			arg_74_1.ladySafeCollider = arg_76_1
 
-			setActive(arg_75_1, false)
-		elseif arg_75_1.name == "Interest" then
-			arg_73_1.ladyInterestRoot = arg_75_1
-		elseif arg_75_1.name == "Head Center" then
-			arg_73_1.ladyHeadCenter = arg_75_1
+			setActive(arg_76_1, false)
+		elseif arg_76_1.name == "Interest" then
+			arg_74_1.ladyInterestRoot = arg_76_1
+		elseif arg_76_1.name == "Head Center" then
+			arg_74_1.ladyHeadCenter = arg_76_1
 		end
 
-		if var_73_0[arg_75_1.name] then
-			arg_73_1.ladyBoneMaps[var_73_0[arg_75_1.name]] = arg_75_1
+		if var_74_0[arg_76_1.name] then
+			arg_74_1.ladyBoneMaps[var_74_0[arg_76_1.name]] = arg_76_1
 		end
 	end)
 
-	arg_73_1.ladyColliders = {}
-	arg_73_1.ladyTouchColliders = {}
+	arg_74_1.ladyColliders = {}
+	arg_74_1.ladyTouchColliders = {}
 
-	table.IpairsCArray(arg_73_1.lady:GetComponentsInChildren(typeof(UnityEngine.Collider), true), function(arg_76_0, arg_76_1)
-		if arg_76_1:GetType():Equals(typeof(UnityEngine.MeshCollider)) then
+	table.IpairsCArray(arg_74_1.lady:GetComponentsInChildren(typeof(UnityEngine.Collider), true), function(arg_77_0, arg_77_1)
+		if arg_77_1:GetType():Equals(typeof(UnityEngine.MeshCollider)) then
 			return
 		end
 
-		child = tf(arg_76_1)
+		child = tf(arg_77_1)
 
-		local var_76_0 = child.name
-		local var_76_1 = var_76_0 and string.find(var_76_0, "Collider") or -1
+		local var_77_0 = child.name
+		local var_77_1 = var_77_0 and string.find(var_77_0, "Collider") or -1
 
-		if var_76_1 <= 0 then
-			errorMsg("Wrong Name to lady Collider : " .. var_76_0)
+		if var_77_1 <= 0 then
+			errorMsg("Wrong Name to lady Collider : " .. var_77_0)
 
 			return
 		end
 
-		local var_76_2 = string.sub(var_76_0, 1, var_76_1 - 1)
+		local var_77_2 = string.sub(var_77_0, 1, var_77_1 - 1)
 
-		if var_0_0.BONE_TO_TOUCH[var_76_2] == nil then
+		if var_0_0.BONE_TO_TOUCH[var_77_2] == nil then
 			return
 		end
 
-		arg_73_1.ladyColliders[var_76_2] = child
+		arg_74_1.ladyColliders[var_77_2] = child
 
-		table.insert(arg_73_1.ladyTouchColliders, child)
+		table.insert(arg_74_1.ladyTouchColliders, child)
 		setActive(child, false)
 	end)
-	arg_73_1:HXCharacter(arg_73_1.lady)
+	arg_74_1:HXCharacter(arg_74_1.lady)
 	;(function()
-		local var_77_0 = "dorm3d/effect/prefab/function/vfx_function_aixin02"
-		local var_77_1 = "vfx_function_aixin02"
+		local var_78_0 = "dorm3d/effect/prefab/function/vfx_function_aixin02"
+		local var_78_1 = "vfx_function_aixin02"
 
-		arg_73_1.loader:GetPrefab(var_77_0, var_77_1, function(arg_78_0)
-			arg_73_1.effectHeart = arg_78_0
+		arg_74_1.loader:GetPrefab(var_78_0, var_78_1, function(arg_79_0)
+			arg_74_1.effectHeart = arg_79_0
 
-			setActive(arg_78_0, false)
+			setActive(arg_79_0, false)
 			onNextTick(function()
-				setParent(arg_73_1.effectHeart, arg_73_1.ladyHeadCenter)
+				setParent(arg_74_1.effectHeart, arg_74_1.ladyHeadCenter)
 			end)
 		end)
 	end)()
 
-	arg_73_1.clothComps = {}
-	arg_73_1.ladyClothCompSettings = {}
+	arg_74_1.clothComps = {}
+	arg_74_1.ladyClothCompSettings = {}
 
-	table.IpairsCArray(arg_73_1.lady:GetComponentsInChildren(typeof("MagicaCloth.BaseCloth"), true), function(arg_80_0, arg_80_1)
-		table.insert(arg_73_1.clothComps, arg_80_1)
+	table.IpairsCArray(arg_74_1.lady:GetComponentsInChildren(typeof("MagicaCloth2.MagicaCloth"), true), function(arg_81_0, arg_81_1)
+		table.insert(arg_74_1.clothComps, arg_81_1)
 
-		arg_73_1.ladyClothCompSettings[arg_80_1] = {
-			enabled = arg_80_1.enabled
+		arg_74_1.ladyClothCompSettings[arg_81_1] = {
+			enabled = arg_81_1.enabled
 		}
 	end)
 
-	arg_73_1.clothColliderDict = {}
-	arg_73_1.ladyClothColliderSettings = {}
+	arg_74_1.clothColliderDict = {}
+	arg_74_1.ladyClothColliderSettings = {}
 
-	local var_73_2 = typeof("MagicaCloth.MagicaCapsuleCollider")
+	local var_74_2 = typeof("MagicaCloth2.MagicaCapsuleCollider")
 
-	table.IpairsCArray(arg_73_1.lady:GetComponentsInChildren(var_73_2, true), function(arg_81_0, arg_81_1)
-		arg_73_1.clothColliderDict[arg_81_1.name] = arg_81_1
-		arg_73_1.ladyClothColliderSettings[arg_81_1] = {
-			enabled = arg_81_1.enabled,
-			StartRadius = ReflectionHelp.RefGetProperty(var_73_2, "StartRadius", arg_81_1),
-			EndRadius = ReflectionHelp.RefGetProperty(var_73_2, "EndRadius", arg_81_1)
+	table.IpairsCArray(arg_74_1.lady:GetComponentsInChildren(var_74_2, true), function(arg_82_0, arg_82_1)
+		local var_82_0 = arg_82_1:GetSize()
+
+		arg_74_1.clothColliderDict[arg_82_1.name] = arg_82_1
+		arg_74_1.ladyClothColliderSettings[arg_82_1] = {
+			enabled = arg_82_1.enabled,
+			StartRadius = var_82_0.x,
+			EndRadius = var_82_0.y
 		}
 	end)
-	arg_73_1:EnableCloth(arg_73_1, false)
+	arg_74_1:EnableCloth(arg_74_1, false)
 
-	arg_73_1.ladyIKRoot = arg_73_1.lady:Find("IKLayers")
+	arg_74_1.ladyIKRoot = arg_74_1.lady:Find("IKLayers")
 
-	eachChild(arg_73_1.ladyIKRoot, function(arg_82_0)
-		setActive(arg_82_0, false)
+	eachChild(arg_74_1.ladyIKRoot, function(arg_83_0)
+		setActive(arg_83_0, false)
 	end)
-	GetComponent(arg_73_1.lady, typeof(EventTriggerListener)):AddPointClickFunc(function(arg_83_0, arg_83_1)
-		if arg_83_1.rawPointerPress.transform == arg_73_1.ladyCollider then
-			arg_73_1:emit(var_0_0.CLICK_CHARACTER, arg_73_2)
+	GetComponent(arg_74_1.lady, typeof(EventTriggerListener)):AddPointClickFunc(function(arg_84_0, arg_84_1)
+		if arg_84_1.rawPointerPress.transform == arg_74_1.ladyCollider then
+			arg_74_1:emit(var_0_0.CLICK_CHARACTER, arg_74_2)
 		else
-			local var_83_0 = table.keyof(arg_73_1.IKSettings.Colliders, arg_83_1.rawPointerPress.transform)
+			local var_84_0 = table.keyof(arg_74_1.IKSettings.Colliders, arg_84_1.rawPointerPress.transform)
 
-			arg_73_1:emit(var_0_0.ON_TOUCH_CHARACTER, var_83_0 or arg_83_1.rawPointerPress.name)
+			arg_74_1:emit(var_0_0.ON_TOUCH_CHARACTER, var_84_0 or arg_84_1.rawPointerPress.name)
 		end
 	end)
-	arg_73_1.ladyAnimator:GetComponent("DftAniEvent"):SetCommonEvent(function(arg_84_0)
-		if arg_73_1.nowState and arg_84_0.animatorStateInfo:IsName(arg_73_1.nowState) then
-			existCall(arg_73_1.stateCallback)
+	arg_74_1.ladyAnimator:GetComponent("DftAniEvent"):SetCommonEvent(function(arg_85_0)
+		if arg_74_1.nowState and arg_85_0.animatorStateInfo:IsName(arg_74_1.nowState) then
+			existCall(arg_74_1.stateCallback)
 
 			return
 		end
 
-		local var_84_0 = arg_84_0.animatorStateInfo
+		local var_85_0 = arg_85_0.animatorStateInfo
 
-		for iter_84_0, iter_84_1 in pairs(arg_73_1.animCallbacks) do
-			if var_84_0:IsName(iter_84_0) then
-				warning("Active", iter_84_0)
+		for iter_85_0, iter_85_1 in pairs(arg_74_1.animCallbacks) do
+			if var_85_0:IsName(iter_85_0) then
+				warning("Active", iter_85_0)
 
-				local var_84_1 = table.removebykey(arg_73_1.animCallbacks, iter_84_0)
+				local var_85_1 = table.removebykey(arg_74_1.animCallbacks, iter_85_0)
 
-				existCall(var_84_1)
+				existCall(var_85_1)
 
 				return
 			end
 		end
 
-		if arg_84_0.stringParameter ~= "" then
-			arg_73_1:OnAnimationEvent(arg_84_0)
+		if arg_85_0.stringParameter ~= "" then
+			arg_74_1:OnAnimationEvent(arg_85_0)
 		end
 	end)
 
-	arg_73_1.animEventCallbacks = {}
-	arg_73_1.animCallbacks = {}
+	arg_74_1.animEventCallbacks = {}
+	arg_74_1.animCallbacks = {}
 end
 
-function var_0_0.SwitchCharacterSkin(arg_85_0, arg_85_1, arg_85_2, arg_85_3, arg_85_4)
-	local var_85_0 = arg_85_1.skinIdList
+function var_0_0.SwitchCharacterSkin(arg_86_0, arg_86_1, arg_86_2, arg_86_3, arg_86_4)
+	local var_86_0 = arg_86_1.skinIdList
 
-	assert(table.contains(var_85_0, arg_85_3))
+	assert(table.contains(var_86_0, arg_86_3))
 
-	local var_85_1 = arg_85_0:GetCurrentAnim()
-	local var_85_2 = arg_85_1.skinId
-	local var_85_3 = arg_85_1.skinDict[var_85_2].ladyGameobject
-	local var_85_4 = var_85_3.transform.position
-	local var_85_5 = var_85_3.transform.rotation
+	local var_86_1 = arg_86_0:GetCurrentAnim()
+	local var_86_2 = arg_86_1.skinId
+	local var_86_3 = arg_86_1.skinDict[var_86_2].ladyGameobject
+	local var_86_4 = var_86_3.transform.position
+	local var_86_5 = var_86_3.transform.rotation
 
-	setActive(var_85_3, false)
+	setActive(var_86_3, false)
 
-	arg_85_1.skinId = arg_85_3
+	arg_86_1.skinId = arg_86_3
 
-	setActive(arg_85_1.skinDict[arg_85_3].ladyGameobject, true)
+	setActive(arg_86_1.skinDict[arg_86_3].ladyGameobject, true)
 
-	arg_85_1.ladyGameobject = arg_85_1.skinDict[arg_85_3].ladyGameobject
-	arg_85_1.ladyCollider = nil
+	arg_86_1.ladyGameobject = arg_86_1.skinDict[arg_86_3].ladyGameobject
+	arg_86_1.ladyCollider = nil
 
-	arg_85_0:InitCharacter(arg_85_1, arg_85_2)
-	arg_85_1.ladyAnimator:Play(var_85_1, arg_85_1.ladyAnimBaseLayerIndex)
-	arg_85_1.ladyAnimator:Update(0)
-	arg_85_1.lady:SetPositionAndRotation(var_85_4, var_85_5)
-	existCall(arg_85_4)
+	arg_86_0:InitCharacter(arg_86_1, arg_86_2)
+	arg_86_1.ladyAnimator:Play(var_86_1, arg_86_1.ladyAnimBaseLayerIndex)
+	arg_86_1.ladyAnimator:Update(0)
+	arg_86_1.lady:SetPositionAndRotation(var_86_4, var_86_5)
+	existCall(arg_86_4)
 end
 
-function var_0_0.SetCameraLady(arg_86_0, arg_86_1)
-	arg_86_0.cameraAim2.LookAt = arg_86_1.ladyInterestRoot
-	arg_86_0.cameras[var_0_0.CAMERA.TALK].Follow = arg_86_1.ladyInterestRoot
-	arg_86_0.cameras[var_0_0.CAMERA.TALK].LookAt = arg_86_1.ladyInterestRoot
-	arg_86_0.cameraGift.Follow = arg_86_0.ladyInterest
-	arg_86_0.cameraGift.LookAt = arg_86_0.ladyInterest
-	arg_86_0.cameraRole2.LookAt = arg_86_1.ladyInterestRoot
-	arg_86_0.cameras[var_0_0.CAMERA.PHOTO].Follow = arg_86_0.ladyInterest
-	arg_86_0.cameras[var_0_0.CAMERA.PHOTO].LookAt = arg_86_0.ladyInterest
+function var_0_0.SetCameraLady(arg_87_0, arg_87_1)
+	arg_87_0.cameraAim2.LookAt = arg_87_1.ladyInterestRoot
+	arg_87_0.cameras[var_0_0.CAMERA.TALK].Follow = arg_87_1.ladyInterestRoot
+	arg_87_0.cameras[var_0_0.CAMERA.TALK].LookAt = arg_87_1.ladyInterestRoot
+	arg_87_0.cameraGift.Follow = arg_87_0.ladyInterest
+	arg_87_0.cameraGift.LookAt = arg_87_0.ladyInterest
+	arg_87_0.cameraRole2.LookAt = arg_87_1.ladyInterestRoot
+	arg_87_0.cameras[var_0_0.CAMERA.PHOTO].Follow = arg_87_0.ladyInterest
+	arg_87_0.cameras[var_0_0.CAMERA.PHOTO].LookAt = arg_87_0.ladyInterest
 end
 
-function var_0_0.initNodeCanvas(arg_87_0)
-	local var_87_0 = pg.NodeCanvasMgr.GetInstance()
+function var_0_0.initNodeCanvas(arg_88_0)
+	local var_88_0 = pg.NodeCanvasMgr.GetInstance()
 
-	var_87_0:Active()
-	var_87_0:RegisterFunc("DistanceTrigger", function(arg_88_0)
-		arg_87_0:emit(var_0_0.DISTANCE_TRIGGER, arg_88_0, arg_87_0.ladyDict[arg_88_0].dis)
+	var_88_0:Active()
+	var_88_0:RegisterFunc("DistanceTrigger", function(arg_89_0)
+		arg_88_0:emit(var_0_0.DISTANCE_TRIGGER, arg_89_0, arg_88_0.ladyDict[arg_89_0].dis)
 	end)
-	var_87_0:RegisterFunc("ShortWaitAction", function(arg_89_0)
-		arg_87_0:DoShortWait(arg_89_0)
+	var_88_0:RegisterFunc("ShortWaitAction", function(arg_90_0)
+		arg_88_0:DoShortWait(arg_90_0)
 	end)
-	var_87_0:RegisterFunc("WatchShortWaitAction", function(arg_90_0)
-		arg_87_0:DoShortWait(arg_90_0)
+	var_88_0:RegisterFunc("WatchShortWaitAction", function(arg_91_0)
+		arg_88_0:DoShortWait(arg_91_0)
 	end)
-	var_87_0:RegisterFunc("WalkDistanceTrigger", function(arg_91_0)
-		arg_87_0:emit(var_0_0.WALK_DISTANCE_TRIGGER, arg_91_0, arg_87_0.ladyDict[arg_91_0].dis)
+	var_88_0:RegisterFunc("WalkDistanceTrigger", function(arg_92_0)
+		arg_88_0:emit(var_0_0.WALK_DISTANCE_TRIGGER, arg_92_0, arg_88_0.ladyDict[arg_92_0].dis)
 	end)
-	var_87_0:RegisterFunc("ChangeWatch", function(arg_92_0)
-		arg_87_0:emit(var_0_0.CHANGE_WATCH, arg_92_0)
+	var_88_0:RegisterFunc("ChangeWatch", function(arg_93_0)
+		arg_88_0:emit(var_0_0.CHANGE_WATCH, arg_93_0)
 	end)
 end
 
-function var_0_0.SetAllBlackbloardValue(arg_93_0, arg_93_1, arg_93_2)
-	arg_93_0[arg_93_1] = arg_93_2
+function var_0_0.SetAllBlackbloardValue(arg_94_0, arg_94_1, arg_94_2)
+	arg_94_0[arg_94_1] = arg_94_2
 
-	for iter_93_0, iter_93_1 in pairs(arg_93_0.ladyDict) do
-		arg_93_0:SetBlackboardValue(iter_93_1, arg_93_1, arg_93_2)
+	for iter_94_0, iter_94_1 in pairs(arg_94_0.ladyDict) do
+		arg_94_0:SetBlackboardValue(iter_94_1, arg_94_1, arg_94_2)
 	end
 end
 
-function var_0_0.SetBlackboardValue(arg_94_0, arg_94_1, arg_94_2, arg_94_3)
-	arg_94_1.blackboard = arg_94_1.blackboard or {}
-	arg_94_1.blackboard[arg_94_2] = arg_94_3
-
-	pg.NodeCanvasMgr.GetInstance():SetBlackboradValue(arg_94_2, arg_94_3, arg_94_1.ladyBlackboard)
-end
-
-function var_0_0.GetBlackboardValue(arg_95_0, arg_95_1, arg_95_2)
+function var_0_0.SetBlackboardValue(arg_95_0, arg_95_1, arg_95_2, arg_95_3)
 	arg_95_1.blackboard = arg_95_1.blackboard or {}
+	arg_95_1.blackboard[arg_95_2] = arg_95_3
 
-	return arg_95_1.blackboard[arg_95_2]
+	pg.NodeCanvasMgr.GetInstance():SetBlackboradValue(arg_95_2, arg_95_3, arg_95_1.ladyBlackboard)
 end
 
-function var_0_0.didEnter(arg_96_0)
-	local var_96_0 = -21.6 / Screen.height
+function var_0_0.GetBlackboardValue(arg_96_0, arg_96_1, arg_96_2)
+	arg_96_1.blackboard = arg_96_1.blackboard or {}
 
-	arg_96_0.joystickDelta = Vector2.zero
-	arg_96_0.joystickTimer = FrameTimer.New(function()
-		local var_97_0 = arg_96_0.joystickDelta * var_96_0
-		local var_97_1 = var_97_0.x
-		local var_97_2 = var_97_0.y
+	return arg_96_1.blackboard[arg_96_2]
+end
 
-		local function var_97_3(arg_98_0, arg_98_1, arg_98_2)
-			local var_98_0 = arg_98_0[arg_98_1]
+function var_0_0.didEnter(arg_97_0)
+	local var_97_0 = -21.6 / Screen.height
 
-			var_98_0.m_InputAxisValue = arg_98_2
-			arg_98_0[arg_98_1] = var_98_0
+	arg_97_0.joystickDelta = Vector2.zero
+	arg_97_0.joystickTimer = FrameTimer.New(function()
+		local var_98_0 = arg_97_0.joystickDelta * var_97_0
+		local var_98_1 = var_98_0.x
+		local var_98_2 = var_98_0.y
+
+		local function var_98_3(arg_99_0, arg_99_1, arg_99_2)
+			local var_99_0 = arg_99_0[arg_99_1]
+
+			var_99_0.m_InputAxisValue = arg_99_2
+			arg_99_0[arg_99_1] = var_99_0
 		end
 
-		if arg_96_0.surroudCamera and not arg_96_0.pinchMode then
-			var_97_3(arg_96_0.surroudCamera, "m_XAxis", var_97_1)
-			var_97_3(arg_96_0.surroudCamera, "m_YAxis", var_97_2)
-		elseif arg_96_0.furniturePOV and arg_96_0.cameras[var_0_0.CAMERA.FURNITURE_WATCH] and isActive(arg_96_0.cameras[var_0_0.CAMERA.FURNITURE_WATCH]) then
-			var_97_3(arg_96_0.furniturePOV, "m_HorizontalAxis", var_97_1)
-			var_97_3(arg_96_0.furniturePOV, "m_VerticalAxis", var_97_2)
+		if arg_97_0.surroudCamera and not arg_97_0.pinchMode then
+			var_98_3(arg_97_0.surroudCamera, "m_XAxis", var_98_1)
+			var_98_3(arg_97_0.surroudCamera, "m_YAxis", var_98_2)
+		elseif arg_97_0.furniturePOV and arg_97_0.cameras[var_0_0.CAMERA.FURNITURE_WATCH] and isActive(arg_97_0.cameras[var_0_0.CAMERA.FURNITURE_WATCH]) then
+			var_98_3(arg_97_0.furniturePOV, "m_HorizontalAxis", var_98_1)
+			var_98_3(arg_97_0.furniturePOV, "m_VerticalAxis", var_98_2)
 		end
 
-		arg_96_0.joystickDelta = Vector2.zero
+		arg_97_0.joystickDelta = Vector2.zero
 	end, 1, -1)
 
-	arg_96_0.joystickTimer:Start()
+	arg_97_0.joystickTimer:Start()
 
-	local var_96_1 = 1.75
+	local var_97_1 = 1.75
 
-	arg_96_0.moveStickTimer = FrameTimer.New(function()
-		if not arg_96_0.moveStickDraging then
+	arg_97_0.moveStickTimer = FrameTimer.New(function()
+		if not arg_97_0.moveStickDraging then
 			return
 		end
 
-		local var_99_0 = arg_96_0.moveStickPosition
-		local var_99_1 = 200
-		local var_99_2 = (var_99_0 - arg_96_0.moveStickOrigin):ClampMagnitude(var_99_1)
-		local var_99_3 = var_99_2 / var_99_1
+		local var_100_0 = arg_97_0.moveStickPosition
+		local var_100_1 = 200
+		local var_100_2 = (var_100_0 - arg_97_0.moveStickOrigin):ClampMagnitude(var_100_1)
+		local var_100_3 = var_100_2 / var_100_1
 
-		arg_96_0.moveStickPosition = arg_96_0.moveStickOrigin + var_99_2
+		arg_97_0.moveStickPosition = arg_97_0.moveStickOrigin + var_100_2
 
-		local var_99_4 = Vector3.New(var_99_3.x, 0, var_99_3.y)
-		local var_99_5 = arg_96_0.mainCameraTF:TransformDirection(var_99_4)
+		local var_100_4 = Vector3.New(var_100_3.x, 0, var_100_3.y)
+		local var_100_5 = arg_97_0.mainCameraTF:TransformDirection(var_100_4)
 
-		var_99_5.y = 0
+		var_100_5.y = 0
 
-		local var_99_6 = var_99_5:Normalize()
+		local var_100_6 = var_100_5:Normalize()
 
-		var_99_6:Mul(var_96_1)
+		var_100_6:Mul(var_97_1)
 
-		if isActive(arg_96_0.cameras[var_0_0.CAMERA.POV]) then
-			arg_96_0.playerController:SimpleMove(var_99_6)
+		if isActive(arg_97_0.cameras[var_0_0.CAMERA.POV]) then
+			arg_97_0.playerController:SimpleMove(var_100_6)
 
-			arg_96_0.tweenFOV = true
-		elseif isActive(arg_96_0.cameras[var_0_0.CAMERA.PHOTO_FREE]) then
-			arg_96_0.cameras[var_0_0.CAMERA.PHOTO_FREE]:GetComponent(typeof(UnityEngine.CharacterController)):Move(var_99_6 * Time.deltaTime)
-			arg_96_0:emit(Dorm3dPhotoMediator.CAMERA_STICK_MOVE, var_99_3:Normalize())
+			arg_97_0.tweenFOV = true
+		elseif isActive(arg_97_0.cameras[var_0_0.CAMERA.PHOTO_FREE]) then
+			arg_97_0.cameras[var_0_0.CAMERA.PHOTO_FREE]:GetComponent(typeof(UnityEngine.CharacterController)):Move(var_100_6 * Time.deltaTime)
+			arg_97_0:emit(Dorm3dPhotoMediator.CAMERA_STICK_MOVE, var_100_3:Normalize())
 			onNextTick(function()
-				local var_100_0 = arg_96_0.cameras[var_0_0.CAMERA.PHOTO_FREE]
-				local var_100_1 = math.InverseLerp(arg_96_0.restrictedHeightRange[1], arg_96_0.restrictedHeightRange[2], var_100_0.position.y)
+				local var_101_0 = arg_97_0.cameras[var_0_0.CAMERA.PHOTO_FREE]
+				local var_101_1 = math.InverseLerp(arg_97_0.restrictedHeightRange[1], arg_97_0.restrictedHeightRange[2], var_101_0.position.y)
 
-				arg_96_0:emit(Dorm3dPhotoMediator.CAMERA_LIFT_CHANGED, var_100_1)
+				arg_97_0:emit(Dorm3dPhotoMediator.CAMERA_LIFT_CHANGED, var_101_1)
 			end)
 		end
 	end, 1, -1)
 
-	arg_96_0.moveStickTimer:Start()
+	arg_97_0.moveStickTimer:Start()
 
-	arg_96_0.pinchMode = false
-	arg_96_0.pinchSize = 0
-	arg_96_0.pinchValue = 1
-	arg_96_0.pinchNodeOrder = 1
+	arg_97_0.pinchMode = false
+	arg_97_0.pinchSize = 0
+	arg_97_0.pinchValue = 1
+	arg_97_0.pinchNodeOrder = 1
 
-	GlobalClickEventMgr.Inst:AddBeginPinchFunc(function(arg_101_0, arg_101_1)
-		if arg_96_0.surroudCamera and isActive(arg_96_0.surroudCamera) then
-			arg_96_0.pinchMode = true
-			arg_96_0.pinchSize = (arg_101_0 - arg_101_1):Magnitude()
-			arg_96_0.pinchNodeOrder = arg_101_1.x < arg_101_0.x and -1 or 1
+	GlobalClickEventMgr.Inst:AddBeginPinchFunc(function(arg_102_0, arg_102_1)
+		if arg_97_0.surroudCamera and isActive(arg_97_0.surroudCamera) then
+			arg_97_0.pinchMode = true
+			arg_97_0.pinchSize = (arg_102_0 - arg_102_1):Magnitude()
+			arg_97_0.pinchNodeOrder = arg_102_1.x < arg_102_0.x and -1 or 1
 
 			return
 		end
 
-		if isActive(arg_96_0.cameras[var_0_0.CAMERA.POV]) then
-			if (arg_101_0 - arg_101_1):Magnitude() < Screen.height * 0.5 then
-				arg_96_0.pinchMode = true
-				arg_96_0.pinchSize = (arg_101_0 - arg_101_1):Magnitude()
-				arg_96_0.pinchNodeOrder = arg_101_1.x < arg_101_0.x and -1 or 1
+		if isActive(arg_97_0.cameras[var_0_0.CAMERA.POV]) then
+			if (arg_102_0 - arg_102_1):Magnitude() < Screen.height * 0.5 then
+				arg_97_0.pinchMode = true
+				arg_97_0.pinchSize = (arg_102_0 - arg_102_1):Magnitude()
+				arg_97_0.pinchNodeOrder = arg_102_1.x < arg_102_0.x and -1 or 1
 			end
 
 			return
 		end
 	end)
 
-	local var_96_2 = 0.01
+	local var_97_2 = 0.01
 
 	if IsUnityEditor then
-		var_96_2 = 0.1
+		var_97_2 = 0.1
 	end
 
-	local var_96_3 = var_96_2 * 1080 / Screen.height
+	local var_97_3 = var_97_2 * 1080 / Screen.height
 
-	GlobalClickEventMgr.Inst:AddPinchFunc(function(arg_102_0, arg_102_1)
-		if not arg_96_0.pinchMode then
+	GlobalClickEventMgr.Inst:AddPinchFunc(function(arg_103_0, arg_103_1)
+		if not arg_97_0.pinchMode then
 			return
 		end
 
-		local var_102_0 = (arg_102_0 - arg_102_1):Magnitude()
-		local var_102_1 = arg_96_0.pinchSize - var_102_0
-		local var_102_2 = arg_96_0.pinchNodeOrder * (arg_102_1.x < arg_102_0.x and -1 or 1)
-		local var_102_3 = var_102_1 * var_96_3 * var_102_2
+		local var_103_0 = (arg_103_0 - arg_103_1):Magnitude()
+		local var_103_1 = arg_97_0.pinchSize - var_103_0
+		local var_103_2 = arg_97_0.pinchNodeOrder * (arg_103_1.x < arg_103_0.x and -1 or 1)
+		local var_103_3 = var_103_1 * var_97_3 * var_103_2
 
-		if isActive(arg_96_0.cameras[var_0_0.CAMERA.POV]) then
-			local var_102_4 = 0.5
-			local var_102_5 = 1
+		if isActive(arg_97_0.cameras[var_0_0.CAMERA.POV]) then
+			local var_103_4 = 0.5
+			local var_103_5 = 1
 
-			arg_96_0.pinchValue = math.clamp(arg_96_0.pinchValue + var_102_3, var_102_4, var_102_5)
-			arg_96_0.pinchSize = var_102_0
+			arg_97_0.pinchValue = math.clamp(arg_97_0.pinchValue + var_103_3, var_103_4, var_103_5)
+			arg_97_0.pinchSize = var_103_0
 
-			arg_96_0:SetPOVFOV(arg_96_0.POVOriginalFOV * arg_96_0.pinchValue)
+			arg_97_0:SetPOVFOV(arg_97_0.POVOriginalFOV * arg_97_0.pinchValue)
 
-			arg_96_0.tweenFOV = nil
+			arg_97_0.tweenFOV = nil
 
 			return
 		end
 
-		if isActive(arg_96_0.surroudCamera) and arg_96_0.surroudCamera == arg_96_0.cameras[var_0_0.CAMERA.PHOTO] then
-			local var_102_6 = 0.5
-			local var_102_7 = 1
+		if isActive(arg_97_0.surroudCamera) and arg_97_0.surroudCamera == arg_97_0.cameras[var_0_0.CAMERA.PHOTO] then
+			local var_103_6 = 0.5
+			local var_103_7 = 1
 
-			arg_96_0:SetPinchValue(math.clamp(arg_96_0.pinchValue + var_102_3, var_102_6, var_102_7))
+			arg_97_0:SetPinchValue(math.clamp(arg_97_0.pinchValue + var_103_3, var_103_6, var_103_7))
 
-			arg_96_0.pinchSize = var_102_0
+			arg_97_0.pinchSize = var_103_0
 
 			return
 		end
 	end)
 	GlobalClickEventMgr.Inst:AddEndPinchFunc(function()
-		arg_96_0.pinchMode = false
-		arg_96_0.pinchSize = 0
+		arg_97_0.pinchMode = false
+		arg_97_0.pinchSize = 0
 	end)
 
-	arg_96_0.cameraBlendCallbacks = {}
-	arg_96_0.activeCMCamera = nil
+	arg_97_0.cameraBlendCallbacks = {}
+	arg_97_0.activeCMCamera = nil
 
-	function arg_96_0.camBrainEvenetHandler.OnBlendStarted(arg_104_0)
-		if arg_96_0.activeCMCamera then
-			arg_96_0:OnCameraBlendFinished(arg_96_0.activeCMCamera)
+	function arg_97_0.camBrainEvenetHandler.OnBlendStarted(arg_105_0)
+		if arg_97_0.activeCMCamera then
+			arg_97_0:OnCameraBlendFinished(arg_97_0.activeCMCamera)
 		end
 
-		local var_104_0 = arg_96_0.camBrain.ActiveVirtualCamera
+		local var_105_0 = arg_97_0.camBrain.ActiveVirtualCamera
 
-		arg_96_0.activeCMCamera = var_104_0
+		arg_97_0.activeCMCamera = var_105_0
 	end
 
-	function arg_96_0.camBrainEvenetHandler.OnBlendFinished(arg_105_0)
-		arg_96_0.activeCMCamera = nil
+	function arg_97_0.camBrainEvenetHandler.OnBlendFinished(arg_106_0)
+		arg_97_0.activeCMCamera = nil
 
-		arg_96_0:OnCameraBlendFinished(arg_105_0)
+		arg_97_0:OnCameraBlendFinished(arg_106_0)
 	end
 
-	for iter_96_0, iter_96_1 in pairs(arg_96_0.ladyDict) do
-		if iter_96_1.tfPendintItem then
+	for iter_97_0, iter_97_1 in pairs(arg_97_0.ladyDict) do
+		if iter_97_1.tfPendintItem then
 			onNextTick(function()
-				setParent(iter_96_1.tfPendintItem, iter_96_1.lady)
+				setParent(iter_97_1.tfPendintItem, iter_97_1.lady)
 			end)
 		end
 
-		iter_96_1.ladyOwner = GetComponent(iter_96_1.lady, "GraphOwner")
-		iter_96_1.ladyBlackboard = GetComponent(iter_96_1.lady, "Blackboard")
+		iter_97_1.ladyOwner = GetComponent(iter_97_1.lady, "GraphOwner")
+		iter_97_1.ladyBlackboard = GetComponent(iter_97_1.lady, "Blackboard")
 
-		arg_96_0:SetBlackboardValue(iter_96_1, "groupId", iter_96_0)
+		arg_97_0:SetBlackboardValue(iter_97_1, "groupId", iter_97_0)
 		onNextTick(function()
-			iter_96_1.ladyOwner.enabled = true
+			iter_97_1.ladyOwner.enabled = true
 		end)
 	end
 
-	arg_96_0.expressionDict = {}
+	arg_97_0.expressionDict = {}
 
-	pg.UIMgr.GetInstance():OverlayPanel(arg_96_0.blockLayer, {
+	pg.UIMgr.GetInstance():OverlayPanel(arg_97_0.blockLayer, {
 		weight = LayerWeightConst.SECOND_LAYER,
 		groupName = LayerWeightConst.GROUP_DORM3D
 	})
-	arg_96_0:ActiveCamera(arg_96_0.cameras[var_0_0.CAMERA.POV])
+	arg_97_0:ActiveCamera(arg_97_0.cameras[var_0_0.CAMERA.POV])
 
-	local var_96_4
-	local var_96_5
-	local var_96_6 = arg_96_0.resumeCallback
+	local var_97_4
+	local var_97_5
+	local var_97_6 = arg_97_0.resumeCallback
 
-	function arg_96_0.resumeCallback()
-		var_96_5 = true
+	function arg_97_0.resumeCallback()
+		var_97_5 = true
 
-		if var_96_4 then
-			existCall(var_96_6)
+		if var_97_4 then
+			existCall(var_97_6)
 		end
 	end
 
-	arg_96_0:RefreshSlots(nil, function()
-		var_96_4 = true
+	arg_97_0:RefreshSlots(nil, function()
+		var_97_4 = true
 
-		if var_96_5 then
-			existCall(var_96_6)
+		if var_97_5 then
+			existCall(var_97_6)
 		end
 	end)
 
-	arg_96_0.updateHandler = UpdateBeat:CreateListener(function()
+	arg_97_0.updateHandler = UpdateBeat:CreateListener(function()
 		xpcall(function()
-			arg_96_0:Update()
+			arg_97_0:Update()
 		end, function(...)
 			errorMsg(debug.traceback(...))
 		end)
 	end)
 
-	UpdateBeat:AddListener(arg_96_0.updateHandler)
+	UpdateBeat:AddListener(arg_97_0.updateHandler)
 end
 
-function var_0_0.InitData(arg_113_0)
-	if not arg_113_0.contextData.ladyZone then
-		arg_113_0.contextData.ladyZone = {}
+function var_0_0.InitData(arg_114_0)
+	if not arg_114_0.contextData.ladyZone then
+		arg_114_0.contextData.ladyZone = {}
 
-		local var_113_0
-		local var_113_1 = arg_113_0.room:getConfig("default_zone")
+		local var_114_0
+		local var_114_1 = arg_114_0.room:getConfig("default_zone")
 
-		for iter_113_0, iter_113_1 in ipairs(arg_113_0.contextData.groupIds) do
-			for iter_113_2, iter_113_3 in ipairs(var_113_1) do
-				if iter_113_3[1] == iter_113_1 then
-					arg_113_0.contextData.ladyZone[iter_113_1] = iter_113_3[2]
+		for iter_114_0, iter_114_1 in ipairs(arg_114_0.contextData.groupIds) do
+			for iter_114_2, iter_114_3 in ipairs(var_114_1) do
+				if iter_114_3[1] == iter_114_1 then
+					arg_114_0.contextData.ladyZone[iter_114_1] = iter_114_3[2]
 
 					break
 				end
 			end
 
-			assert(arg_113_0.contextData.ladyZone[iter_113_1])
+			assert(arg_114_0.contextData.ladyZone[iter_114_1])
 
-			var_113_0 = var_113_0 or arg_113_0.contextData.ladyZone[iter_113_1]
+			var_114_0 = var_114_0 or arg_114_0.contextData.ladyZone[iter_114_1]
 		end
 
-		arg_113_0.contextData.inFurnitureName = var_113_0 or var_113_1[1][2]
+		arg_114_0.contextData.inFurnitureName = var_114_0 or var_114_1[1][2]
 	end
 
-	arg_113_0.zoneDatas = _.select(arg_113_0.room:GetZones(), function(arg_114_0)
-		return not arg_114_0:IsGlobal()
+	arg_114_0.zoneDatas = _.select(arg_114_0.room:GetZones(), function(arg_115_0)
+		return not arg_115_0:IsGlobal()
 	end)
-	arg_113_0.activeSectors = {}
-	arg_113_0.activeLady = {}
+	arg_114_0.activeSectors = {}
+	arg_114_0.activeLady = {}
 end
 
-function var_0_0.Update(arg_115_0)
-	arg_115_0.raycastCamera.fieldOfView = arg_115_0.mainCameraTF:GetComponent(typeof(Camera)).fieldOfView
+function var_0_0.Update(arg_116_0)
+	arg_116_0.raycastCamera.fieldOfView = arg_116_0.mainCameraTF:GetComponent(typeof(Camera)).fieldOfView
 
-	if arg_115_0.tweenFOV then
-		local var_115_0 = Damp(1, 1, Time.deltaTime)
+	if arg_116_0.tweenFOV then
+		local var_116_0 = Damp(1, 1, Time.deltaTime)
 
-		arg_115_0.pinchValue = Mathf.Lerp(arg_115_0.pinchValue, 1, var_115_0)
+		arg_116_0.pinchValue = Mathf.Lerp(arg_116_0.pinchValue, 1, var_116_0)
 
-		arg_115_0:SetPOVFOV(arg_115_0.POVOriginalFOV * arg_115_0.pinchValue)
+		arg_116_0:SetPOVFOV(arg_116_0.POVOriginalFOV * arg_116_0.pinchValue)
 
-		if arg_115_0.pinchValue > 0.99 then
-			arg_115_0.tweenFOV = nil
+		if arg_116_0.pinchValue > 0.99 then
+			arg_116_0.tweenFOV = nil
 		end
 	end
 
-	if isActive(arg_115_0.cameras[var_0_0.CAMERA.POV]) then
-		arg_115_0:TriggerLadyDistance()
+	if isActive(arg_116_0.cameras[var_0_0.CAMERA.POV]) then
+		arg_116_0:TriggerLadyDistance()
 	end
 
-	if arg_115_0.contactInRangeDic then
-		local var_115_1 = arg_115_0.mainCameraTF.forward
-		local var_115_2 = arg_115_0.mainCameraTF.position
-		local var_115_3 = UnityEngine.Rect.New(0, 0, Screen.width, Screen.height)
+	if arg_116_0.contactInRangeDic then
+		local var_116_1 = arg_116_0.transformFilter:Execute():ToTable()
 
-		local function var_115_4(arg_116_0, arg_116_1, arg_116_2)
-			local var_116_0 = arg_116_0.position - var_115_2
-			local var_116_1 = Clone(var_116_0)
+		for iter_116_0, iter_116_1 in pairs(arg_116_0.contactInRangeDic) do
+			local var_116_2 = pg.dorm3d_collection_template[iter_116_0]
+			local var_116_3 = arg_116_0.transRangeDic[iter_116_0]
+			local var_116_4 = underscore(var_116_1):chain():slice(unpack(var_116_3)):any(function(arg_117_0)
+				return arg_117_0
+			end):value()
 
-			var_116_1.y = 0
+			if tobool(iter_116_1) ~= var_116_4 then
+				arg_116_0.contactInRangeDic[iter_116_0] = var_116_4
 
-			if arg_116_1 < var_116_1.magnitude then
-				return false
-			end
-
-			local var_116_2 = var_116_0:Normalize()
-			local var_116_3 = math.acos(Vector3.Dot(var_116_2, var_115_1)) * math.rad2Deg
-
-			if arg_116_2 < math.abs(var_116_3) then
-				return false
-			end
-
-			local var_116_4 = arg_115_0.raycastCamera:WorldToScreenPoint(arg_116_0.position)
-
-			if var_116_4.z < 0 then
-				return false
-			end
-
-			if not var_115_3:Contains(var_116_4) then
-				return false
-			end
-
-			return true
-		end
-
-		for iter_115_0, iter_115_1 in pairs(arg_115_0.contactInRangeDic) do
-			local var_115_5 = pg.dorm3d_collection_template[iter_115_0]
-			local var_115_6 = underscore.any(var_115_5.vfx_prefab, function(arg_117_0)
-				return arg_115_0.modelRoot:Find(arg_117_0) and var_115_4(arg_115_0.modelRoot:Find(arg_117_0), 2, 60)
-			end)
-
-			if tobool(iter_115_1) ~= var_115_6 then
-				arg_115_0.contactInRangeDic[iter_115_0] = var_115_6
-
-				arg_115_0:UpdateContactDisplay(iter_115_0, var_115_6 and not arg_115_0.hideConcatFlag and arg_115_0.contactStateDic[iter_115_0] or arg_115_0.hideContactStateDic[iter_115_0])
+				arg_116_0:UpdateContactDisplay(iter_116_0, var_116_4 and not arg_116_0.hideConcatFlag and arg_116_0.contactStateDic[iter_116_0] or arg_116_0.hideContactStateDic[iter_116_0])
 			end
 		end
 	end
 
-	if arg_115_0.enableFloatUpdate then
-		arg_115_0.ladyDict[arg_115_0.apartment:GetConfigID()]:UpdateFloatPosition()
+	if arg_116_0.enableFloatUpdate then
+		arg_116_0.ladyDict[arg_116_0.apartment:GetConfigID()]:UpdateFloatPosition()
 	end
 
-	arg_115_0:CheckInSector()
+	arg_116_0:CheckInSector()
 
-	if arg_115_0.apartment then
+	if arg_116_0.apartment then
 		(function(arg_118_0)
 			(function()
 				if not arg_118_0.ikHandler then
@@ -1473,28 +1458,28 @@ function var_0_0.Update(arg_115_0)
 				local var_119_1 = pg.UIMgr.GetInstance().uiCamera:Find("Canvas").rect
 				local var_119_2 = var_119_0 - Vector2.New(var_119_1.width, var_119_1.height) * 0.5
 
-				setAnchoredPosition(arg_115_0:GetIKHandTF(), var_119_2)
+				setAnchoredPosition(arg_116_0:GetIKHandTF(), var_119_2)
 
-				if Time.time > arg_115_0.ikNextCheckStamp then
-					arg_115_0.ikNextCheckStamp = arg_115_0.ikNextCheckStamp + var_0_0.IK_STATUS_DELTA
+				if Time.time > arg_116_0.ikNextCheckStamp then
+					arg_116_0.ikNextCheckStamp = arg_116_0.ikNextCheckStamp + var_0_0.IK_STATUS_DELTA
 
 					local var_119_3 = _.detect(arg_118_0.readyIKLayers, function(arg_120_0)
 						return arg_120_0:GetControllerPath() == arg_118_0.ikHandler.ikData:GetControllerPath()
 					end)
 
-					arg_115_0:emit(var_0_0.ON_IK_STATUS_CHANGED, var_119_3:GetConfigID(), var_0_0.IK_STATUS.DRAG)
+					arg_116_0:emit(var_0_0.ON_IK_STATUS_CHANGED, var_119_3:GetConfigID(), var_0_0.IK_STATUS.DRAG)
 				end
 			end)()
 
-			if arg_115_0.enableIKTip then
-				local var_118_0 = not arg_115_0.blockIK and Time.time > arg_115_0.nextTipIKTime
+			if arg_116_0.enableIKTip then
+				local var_118_0 = not arg_116_0.blockIK and Time.time > arg_116_0.nextTipIKTime
 
 				if var_118_0 then
 					local var_118_1 = _.filter(arg_118_0.readyIKLayers, function(arg_121_0)
 						return not arg_121_0.ignoreDrag
 					end)
 
-					UIItemList.StaticAlign(arg_115_0.ikTipsRoot, arg_115_0.ikTipsRoot:GetChild(0), #var_118_1, function(arg_122_0, arg_122_1, arg_122_2)
+					UIItemList.StaticAlign(arg_116_0.ikTipsRoot, arg_116_0.ikTipsRoot:GetChild(0), #var_118_1, function(arg_122_0, arg_122_1, arg_122_2)
 						if arg_122_0 ~= UIItemList.EventUpdate then
 							return
 						end
@@ -1529,7 +1514,7 @@ function var_0_0.Update(arg_115_0)
 								var_122_7 = var_122_8.bounds.center
 							end
 
-							local var_122_9 = arg_115_0:GetLocalPosition(arg_115_0:GetScreenPosition(var_122_7, arg_118_0.IKSettings.CameraRaycaster.eventCamera), arg_115_0.ikTipsRoot) + var_122_5
+							local var_122_9 = arg_116_0:GetLocalPosition(arg_116_0:GetScreenPosition(var_122_7, arg_118_0.IKSettings.CameraRaycaster.eventCamera), arg_116_0.ikTipsRoot) + var_122_5
 
 							setLocalPosition(arg_122_2, var_122_9)
 
@@ -1570,7 +1555,7 @@ function var_0_0.Update(arg_115_0)
 
 						setActive(arg_122_2, var_122_4)
 					end)
-					UIItemList.StaticAlign(arg_115_0.ikClickTipsRoot, arg_115_0.ikClickTipsRoot:GetChild(0), #arg_118_0.iKTouchDatas, function(arg_124_0, arg_124_1, arg_124_2)
+					UIItemList.StaticAlign(arg_116_0.ikClickTipsRoot, arg_116_0.ikClickTipsRoot:GetChild(0), #arg_118_0.iKTouchDatas, function(arg_124_0, arg_124_1, arg_124_2)
 						if arg_124_0 ~= UIItemList.EventUpdate then
 							return
 						end
@@ -1584,7 +1569,7 @@ function var_0_0.Update(arg_115_0)
 						local var_124_4 = pg.dorm3d_ik_touch[var_124_3]
 
 						if #var_124_4.scene_item > 0 then
-							var_124_0 = arg_115_0:GetSceneItem(var_124_4.scene_item)
+							var_124_0 = arg_116_0:GetSceneItem(var_124_4.scene_item)
 						else
 							var_124_0 = arg_118_0.IKSettings.Colliders[var_124_4.body]
 						end
@@ -1597,18 +1582,18 @@ function var_0_0.Update(arg_115_0)
 								var_124_5 = var_124_6.bounds.center
 							end
 
-							setLocalPosition(arg_124_2, arg_115_0:GetLocalPosition(arg_115_0:GetScreenPosition(var_124_5, arg_118_0.IKSettings.CameraRaycaster.eventCamera), arg_115_0.ikClickTipsRoot) + var_124_1)
+							setLocalPosition(arg_124_2, arg_116_0:GetLocalPosition(arg_116_0:GetScreenPosition(var_124_5, arg_118_0.IKSettings.CameraRaycaster.eventCamera), arg_116_0.ikClickTipsRoot) + var_124_1)
 						end
 
 						setActive(arg_124_2, var_124_0)
 					end)
 				end
 
-				setActive(arg_115_0.ikTipsRoot, var_118_0)
-				setActive(arg_115_0.ikClickTipsRoot, var_118_0)
-				setActive(arg_115_0.ikTextTipsRoot, var_118_0)
+				setActive(arg_116_0.ikTipsRoot, var_118_0)
+				setActive(arg_116_0.ikClickTipsRoot, var_118_0)
+				setActive(arg_116_0.ikTextTipsRoot, var_118_0)
 			end
-		end)(arg_115_0.ladyDict[arg_115_0.apartment:GetConfigID()])
+		end)(arg_116_0.ladyDict[arg_116_0.apartment:GetConfigID()])
 	end
 end
 
@@ -3316,6 +3301,8 @@ function var_0_0.PlayCurrentSingleAction(arg_309_0, ...)
 end
 
 function var_0_0.PlaySingleAction(arg_310_0, arg_310_1, arg_310_2, arg_310_3)
+	warning("Play", arg_310_2)
+
 	local var_310_0 = string.find(arg_310_2, "^Face_")
 
 	if tobool(var_310_0) then
@@ -3683,8 +3670,8 @@ end
 
 function var_0_0.RegisterGlobalVolume(arg_345_0)
 	local var_345_0 = arg_345_0.globalVolume
-	local var_345_1 = LuaHelper.GetOrAddVolumeComponent(var_345_0, typeof(BLHX.PostEffect.Overrides.DepthOfField))
-	local var_345_2 = LuaHelper.GetOrAddVolumeComponent(var_345_0, typeof(BLHX.PostEffect.Overrides.ColorGrading))
+	local var_345_1 = LuaHelper.GetOrAddVolumeComponent(var_345_0, typeof(BLHX.Rendering.CustomDepthOfField))
+	local var_345_2 = LuaHelper.GetOrAddVolumeComponent(var_345_0, typeof(UnityEngine.Rendering.Universal.ColorAdjustments))
 
 	arg_345_0.originalCameraSettings = {
 		depthOfField = {
@@ -3716,7 +3703,7 @@ function var_0_0.RegisterGlobalVolume(arg_345_0)
 	}
 	arg_345_0.originalCameraSettings.depthOfField.enabled = true
 
-	local var_345_3 = var_345_0:GetComponent(typeof(BLHX.Volume.Volume))
+	local var_345_3 = var_345_0:GetComponent(typeof(UnityEngine.Rendering.Volume))
 
 	arg_345_0.originalVolume = {
 		profile = var_345_3.sharedProfile,
@@ -3728,8 +3715,8 @@ function var_0_0.SettingCamera(arg_346_0, arg_346_1)
 	arg_346_0.activeCameraSettings = arg_346_1
 
 	local var_346_0 = arg_346_0.globalVolume
-	local var_346_1 = LuaHelper.GetOrAddVolumeComponent(var_346_0, typeof(BLHX.PostEffect.Overrides.DepthOfField))
-	local var_346_2 = LuaHelper.GetOrAddVolumeComponent(var_346_0, typeof(BLHX.PostEffect.Overrides.ColorGrading))
+	local var_346_1 = LuaHelper.GetOrAddVolumeComponent(var_346_0, typeof(BLHX.Rendering.CustomDepthOfField))
+	local var_346_2 = LuaHelper.GetOrAddVolumeComponent(var_346_0, typeof(UnityEngine.Rendering.Universal.ColorAdjustments))
 
 	var_346_1.enabled:Override(arg_346_1.depthOfField.enabled)
 	var_346_1.gaussianStart:Override(arg_346_1.depthOfField.focusDistance.value)
@@ -3751,7 +3738,7 @@ function var_0_0.RevertCameraSettings(arg_348_0)
 end
 
 function var_0_0.SetVolumeProfile(arg_349_0, arg_349_1, arg_349_2)
-	local var_349_0 = arg_349_0.globalVolume:GetComponent(typeof(BLHX.Volume.Volume))
+	local var_349_0 = arg_349_0.globalVolume:GetComponent(typeof(UnityEngine.Rendering.Volume))
 
 	arg_349_0.activeProfileWeight = arg_349_2
 
@@ -3772,7 +3759,7 @@ function var_0_0.SetVolumeProfile(arg_349_0, arg_349_1, arg_349_2)
 end
 
 function var_0_0.RevertVolumeProfile(arg_351_0)
-	local var_351_0 = arg_351_0.globalVolume:GetComponent(typeof(BLHX.Volume.Volume))
+	local var_351_0 = arg_351_0.globalVolume:GetComponent(typeof(UnityEngine.Rendering.Volume))
 
 	var_351_0.profile = arg_351_0.originalVolume.profile
 	var_351_0.weight = arg_351_0.originalVolume.weight
@@ -3785,11 +3772,11 @@ function var_0_0.RevertVolumeProfile(arg_351_0)
 end
 
 function var_0_0.RecordCharacterLight(arg_352_0)
-	local var_352_0 = BLHX.Rendering.PipelineInterface.GetCharacterLightColor()
+	local var_352_0 = arg_352_0.characterLight:GetComponent(typeof("BLHX.Rendering.CharacterLight"))
 
 	arg_352_0.originalCharacterColor = {
-		color = var_352_0.color,
-		intensity = var_352_0.intensity
+		color = ReflectionHelp.RefGetProperty(typeof("BLHX.Rendering.CharacterLight"), "characterLightColor", var_352_0),
+		intensity = ReflectionHelp.RefGetProperty(typeof("BLHX.Rendering.CharacterLight"), "characterLightIntensity", var_352_0)
 	}
 end
 
@@ -3797,8 +3784,10 @@ function var_0_0.SetCharacterLight(arg_353_0, arg_353_1, arg_353_2, arg_353_3)
 	local var_353_0 = arg_353_0.characterLight:GetComponent(typeof(Light))
 	local var_353_1 = Color.Lerp(arg_353_0.originalCharacterColor.color, arg_353_1, arg_353_3)
 	local var_353_2 = math.lerp(arg_353_0.originalCharacterColor.intensity, arg_353_2, arg_353_3)
+	local var_353_3 = arg_353_0.characterLight:GetComponent(typeof("BLHX.Rendering.CharacterLight"))
 
-	BLHX.Rendering.PipelineInterface.SetCharacterLight(var_353_1, var_353_2)
+	ReflectionHelp.RefSetProperty(typeof("BLHX.Rendering.CharacterLight"), "characterLightColor", var_353_3, var_353_1)
+	ReflectionHelp.RefSetProperty(typeof("BLHX.Rendering.CharacterLight"), "characterLightIntensity", var_353_3, var_353_2)
 end
 
 function var_0_0.RevertCharacterLight(arg_354_0)
@@ -3863,7 +3852,7 @@ end
 
 function var_0_0.LoadTimelineScene(arg_363_0, arg_363_1, arg_363_2, arg_363_3, arg_363_4)
 	arg_363_0.dormSceneMgr:LoadTimelineScene({
-		name = string.lower(arg_363_1),
+		name = arg_363_1,
 		assetRootName = arg_363_0.apartment:getConfig("asset_name"),
 		isCache = arg_363_2,
 		waitForTimeline = arg_363_3,
@@ -3877,18 +3866,16 @@ function var_0_0.LoadTimelineScene(arg_363_0, arg_363_1, arg_363_2, arg_363_3, a
 end
 
 function var_0_0.UnloadTimelineScene(arg_365_0, arg_365_1, arg_365_2, arg_365_3)
-	arg_365_0.dormSceneMgr:UnloadTimelineScene(string.lower(arg_365_1), arg_365_2, arg_365_3)
+	arg_365_0.dormSceneMgr:UnloadTimelineScene(arg_365_1, arg_365_2, arg_365_3)
 end
 
 function var_0_0.ChangeArtScene(arg_366_0, arg_366_1, arg_366_2)
-	arg_366_1 = string.lower(arg_366_1)
-
 	warning(arg_366_0.dormSceneMgr.artSceneInfo, "->", arg_366_1, arg_366_1 == arg_366_0.dormSceneMgr.sceneInfo)
 
 	local var_366_0 = {}
 
 	table.insert(var_366_0, function(arg_367_0)
-		arg_366_0.dormSceneMgr:ChangeArtScene(string.lower(arg_366_1), arg_367_0)
+		arg_366_0.dormSceneMgr:ChangeArtScene(arg_366_1, arg_367_0)
 	end)
 
 	if arg_366_1 == arg_366_0.dormSceneMgr.sceneInfo or arg_366_0.dormSceneMgr.artSceneInfo == arg_366_0.dormSceneMgr.sceneInfo then
@@ -3912,8 +3899,6 @@ function var_0_0.ChangeArtScene(arg_366_0, arg_366_1, arg_366_2)
 end
 
 function var_0_0.ChangeSubScene(arg_371_0, arg_371_1, arg_371_2)
-	arg_371_1 = string.lower(arg_371_1)
-
 	warning(arg_371_0.dormSceneMgr.subSceneInfo, "->", arg_371_1, arg_371_1 == arg_371_0.dormSceneMgr.subSceneInfo)
 
 	local var_371_0 = {}
@@ -4038,6 +4023,10 @@ function var_0_0.willExit(arg_378_0)
 	arg_378_0.dormSceneMgr = nil
 
 	ReflectionHelp.RefSetProperty(typeof("UnityEngine.LightmapSettings"), "lightmaps", nil, nil)
+
+	if arg_378_0.transformFilter then
+		arg_378_0.transformFilter:Dispose()
+	end
 end
 
 function var_0_0.InitDefautQuality()
@@ -4089,10 +4078,13 @@ function var_0_0.SettingQuality()
 end
 
 function var_0_0.SetMagicaCollider(arg_385_0, arg_385_1, arg_385_2)
-	local var_385_0 = typeof("MagicaCloth.MagicaCapsuleCollider")
+	local var_385_0 = typeof("MagicaCloth2.MagicaCapsuleCollider")
+	local var_385_1 = arg_385_0:GetSize()
 
-	ReflectionHelp.RefSetProperty(var_385_0, "StartRadius", arg_385_0, arg_385_1)
-	ReflectionHelp.RefSetProperty(var_385_0, "EndRadius", arg_385_0, arg_385_2)
+	var_385_1.x = arg_385_1
+	var_385_1.y = arg_385_2
+
+	arg_385_0:SetSize(var_385_1)
 end
 
 return var_0_0
