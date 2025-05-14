@@ -202,7 +202,7 @@ var_0_0.settings = {
 }
 
 function var_0_0.InitDefautQuality()
-	if PlayerPrefs.GetInt("dorm3d_graphics_settings", 0) == 0 then
+	if PlayerPrefs.GetInt("dorm3d_graphics_settings_new", 0) == 0 then
 		local var_1_0 = DevicePerformanceUtil.GetDevicePerformanceLevel()
 
 		if PLATFORM == PLATFORM_IPHONEPLAYER then
@@ -237,14 +237,14 @@ function var_0_0.InitDefautQuality()
 
 		local var_1_4 = var_1_0 == DevicePerformanceLevel.High and 3 or var_1_0 == DevicePerformanceLevel.Mid and 2 or 1
 
-		PlayerPrefs.SetInt("dorm3d_graphics_settings", var_1_4)
+		PlayerPrefs.SetInt("dorm3d_graphics_settings_new", var_1_4)
 
 		Dorm3dRoomTemplateScene.FirstDefaultSetting = var_1_4
 	end
 end
 
 function var_0_0.SettingQuality()
-	local var_4_0 = PlayerPrefs.GetInt("dorm3d_graphics_settings", 4)
+	local var_4_0 = PlayerPrefs.GetInt("dorm3d_graphics_settings_new", 4)
 	local var_4_1 = var_0_0.assetPath[var_4_0]
 	local var_4_2 = LoadAny("three3dquaitysettings/defaultsettings", var_4_1)
 
@@ -270,6 +270,12 @@ function var_0_0.SettingQuality()
 end
 
 function var_0_0.ClearPlayerPrefs()
+	if PlayerPrefs.GetInt("dorm3d_graphics_settings_changeed", 0) == 1 then
+		return
+	end
+
+	PlayerPrefs.SetInt("dorm3d_graphics_settings_changeed", 1)
+
 	for iter_5_0, iter_5_1 in ipairs(var_0_0.settings) do
 		PlayerPrefs.DeleteKey(iter_5_1.playerPrefsname)
 	end

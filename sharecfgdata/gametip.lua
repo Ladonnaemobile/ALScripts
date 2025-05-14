@@ -8107,6 +8107,10 @@ _G.pg.base.gametip.destroy_high_level_tip = {
 	tip = "<color=#92fc63>$1等级不为1</color>"
 }
 
+_G.pg.base.gametip.destroy_importantequipment_tip = {
+	tip = "<color=#92fc63>重要</color>"
+}
+
 _G.pg.base.gametip.destroy_eliteequipment_tip = {
 	tip = "拆解装备中有$1的装备"
 }
@@ -28398,34 +28402,6 @@ _G.pg.base.gametip.xiaoankeleiqi_npc = {
 			info = "7.npc 角色无法参与大舰队作战中的事件派遣、攻坚队和首领战。"
 		}
 	}
-}
-
-_G.pg.base.gametip.island_name_too_long_or_too_short = {
-	tip = "岛屿名称为1-9个字，请重新输入"
-}
-
-_G.pg.base.gametip.island_name_exist_special_word = {
-	tip = "岛屿名称不可含特殊字符，请重新输入"
-}
-
-_G.pg.base.gametip.island_name_exist_ban_word = {
-	tip = "岛屿名称包含敏感词汇，请重新输入"
-}
-
-_G.pg.base.gametip.island_index_extra_all = {
-	tip = "无限制"
-}
-
-_G.pg.base.gametip.island_index_potency = {
-	tip = "剩余潜能"
-}
-
-_G.pg.base.gametip.island_index_skill = {
-	tip = "技能可升级"
-}
-
-_G.pg.base.gametip.island_index_status = {
-	tip = "有特殊状态"
 }
 
 _G.pg.base.gametip.grapihcs3d_setting_enable_gup_driver = {

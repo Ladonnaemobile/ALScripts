@@ -260,8 +260,6 @@ function var_0_0.initScene(arg_26_0)
 
 	arg_26_0.totalDirectorList = {}
 
-	local var_26_2 = tolua.createinstance(typeof("BLHX.Rendering.FinalBlit"))
-
 	table.IpairsCArray(var_26_1, function(arg_28_0, arg_28_1)
 		local var_28_0 = tf(arg_28_1):Find("[sequence]")
 
@@ -269,19 +267,15 @@ function var_0_0.initScene(arg_26_0)
 			return
 		end
 
-		local var_28_1 = tf(arg_28_1):Find("[camera]/MainCamera"):GetComponent("BLHX.Rendering.BuiltinAdditionalCameraData")
+		local var_28_1 = var_28_0:GetComponent(typeof(UnityEngine.Playables.PlayableDirector))
 
-		ReflectionHelp.RefSetField(typeof("BLHX.Rendering.BuiltinAdditionalCameraData"), "m_FinalBlit", var_28_1, var_26_2)
+		var_28_1.playOnAwake = false
 
-		local var_28_2 = var_28_0:GetComponent(typeof(UnityEngine.Playables.PlayableDirector))
+		var_28_1:Stop()
 
-		var_28_2.playOnAwake = false
+		local var_28_2 = var_28_0:GetComponentsInChildren(typeof(UnityEngine.Playables.PlayableDirector)):ToTable()
 
-		var_28_2:Stop()
-
-		local var_28_3 = var_28_0:GetComponentsInChildren(typeof(UnityEngine.Playables.PlayableDirector)):ToTable()
-
-		for iter_28_0, iter_28_1 in ipairs(var_28_3) do
+		for iter_28_0, iter_28_1 in ipairs(var_28_2) do
 			iter_28_1.playOnAwake = false
 
 			iter_28_1:Stop()
@@ -289,7 +283,7 @@ function var_0_0.initScene(arg_26_0)
 
 		table.insert(arg_26_0.totalDirectorList, {
 			name = arg_28_1.name,
-			director = var_28_2
+			director = var_28_1
 		})
 		setActive(arg_28_1, false)
 	end)

@@ -41,7 +41,7 @@ function var_0_0.JumpToCustomSetting(arg_6_0, arg_6_1)
 
 	arg_6_0:SetPlayerPrefSetting(arg_6_1)
 	pg.m02:sendNotification(GAME.APARTMENT_TRACK, Dorm3dTrackCommand.BuildDataGraphics(4))
-	PlayerPrefs.SetInt("dorm3d_graphics_settings", 4)
+	PlayerPrefs.SetInt("dorm3d_graphics_settings_new", 4)
 	pg.m02:sendNotification(NewSettingsMediator.SelectCustomGraphicSetting)
 end
 
@@ -215,7 +215,7 @@ function var_0_0.OnUpdate(arg_20_0)
 	end
 
 	arg_20_0.playerSettingPlaySet = {}
-	arg_20_0.graphicLevel = PlayerPrefs.GetInt("dorm3d_graphics_settings", 4)
+	arg_20_0.graphicLevel = PlayerPrefs.GetInt("dorm3d_graphics_settings_new", 4)
 	arg_20_0.customSetting = arg_20_0.graphicLevel == 4
 
 	local var_20_0 = var_0_2[arg_20_0.graphicLevel]

@@ -4650,7 +4650,7 @@ function checkCullResume(arg_329_0)
 	}, {
 		0
 	}) then
-		local var_329_0 = arg_329_0:GetComponentsInChildren(typeof(MeshImage)):ToTalbe()
+		local var_329_0 = arg_329_0:GetComponentsInChildren(typeof(MeshImage)):ToTable()
 
 		for iter_329_0, iter_329_1 in ipairs(var_329_0) do
 			iter_329_1:SetVerticesDirty()

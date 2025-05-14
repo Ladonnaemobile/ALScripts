@@ -243,7 +243,7 @@ return {
 			hidePaintObj = true,
 			side = 2,
 			portrait = "zhihuiguan",
-			say = "……处理文件就文处理文件，什么叫出卖身体！",
+			say = "……处理文件就处理文件，什么叫出卖身体！",
 			typewriter = {
 				speed = 0.05,
 				speedUp = 0.01
@@ -323,7 +323,7 @@ return {
 			dir = 1,
 			optionFlag = 1,
 			nameColor = "#A9F548FF",
-			say = "简洁不正是我风格得体现吗~",
+			say = "简洁不正是我风格的体现吗~",
 			typewriter = {
 				speed = 0.05,
 				speedUp = 0.01

@@ -169,10 +169,16 @@ function var_0_0.btn_push_10s(arg_19_0)
 		go = "btn_push_10s",
 		text = "10秒后推送通知",
 		func = function()
+			pg.TipsMgr.GetInstance():ShowTips("推送测试通知")
+
 			local var_20_0 = pg.TimeMgr.GetInstance():STimeDescS(pg.TimeMgr.GetInstance():GetServerTime(), "*t")
 			local var_20_1 = var_20_0.year .. var_20_0.month .. var_20_0.day .. var_20_0.hour .. var_20_0.min .. var_20_0.sec
+			local var_20_2 = pg.TimeMgr.GetInstance():GetServerTime() + 10
 
-			YSNormalTool.NotificationTool.SendBySecondWithIcon("测试标题", var_20_1, 10)
+			pg.PushNotificationMgr.GetInstance():Push("测试标题11111", var_20_1, var_20_2)
+			pg.PushNotificationMgr.GetInstance():Push("测试标题22222", var_20_1, var_20_2)
+			pg.PushNotificationMgr.GetInstance():Push("测试标题33333", var_20_1, var_20_2)
+			pg.PushNotificationMgr.GetInstance():PushCache()
 		end
 	}
 

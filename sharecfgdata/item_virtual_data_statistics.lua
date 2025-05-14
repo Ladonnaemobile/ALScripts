@@ -168053,6 +168053,30 @@ _G.pg.base.item_virtual_data_statistics[65094] = {
 	combination_display = {}
 }
 
+_G.pg.base.item_virtual_data_statistics[65095] = {
+	display = "用于头像框活动兑换，活动结束后将会消失",
+	name = "训练点数",
+	max_num = 0,
+	type = 98,
+	time_limit = 0,
+	rarity = 2,
+	shop_id = -1,
+	replace_item = 0,
+	drop_gold_max = 0,
+	drop_oil_max = 0,
+	link_id = 0,
+	virtual_type = 0,
+	is_world = 0,
+	icon = "Props/xunliandianshu_20250514",
+	id = 65095,
+	order = 0,
+	display_icon = {},
+	price = {},
+	index = {},
+	shiptrans_id = {},
+	combination_display = {}
+}
+
 _G.pg.base.item_virtual_data_statistics[65500] = {
 	display = "铁血抵抗军颁发的纪念勋章，纪念那场对抗星之兽的伟大胜利。\n——我们今日不会毁灭，这个世界亦然，致明日。",
 	name = "抵抗之星纪念勋章",

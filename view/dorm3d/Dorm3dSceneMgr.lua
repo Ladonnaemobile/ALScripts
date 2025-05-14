@@ -89,6 +89,10 @@ function var_0_0.LoadTimelineScene(arg_9_0, arg_9_1, arg_9_2)
 				local var_13_0 = GameObject.Find("[sequence]").transform:GetComponent(typeof(UnityEngine.Playables.PlayableDirector))
 
 				var_13_0:Stop()
+
+				local var_13_1 = GameObject.Find("[camera]").transform:GetComponentInChildren(typeof(Camera))
+
+				setActive(var_13_1, false)
 				TimelineSupport.InitTimeline(var_13_0)
 				TimelineSupport.InitSubtitle(var_13_0, arg_9_1.callName)
 				arg_12_0()

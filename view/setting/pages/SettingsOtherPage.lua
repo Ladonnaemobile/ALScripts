@@ -106,11 +106,12 @@ function var_0_0.NeedRedeem(arg_6_0)
 end
 
 function var_0_0.OnInitPanle(arg_7_0)
-	if PlayerPrefs.GetFloat("firstIntoOtherPanel") == 0 then
+	if PlayerPrefs.GetInt("firstIntoOtherPanel", 0) == 0 then
 		local var_7_0 = arg_7_0:GetPanel(SettingsSecondPasswordPanle)
 
 		arg_7_0:ScrollToPanel(var_7_0)
-		PlayerPrefs.SetFloat("firstIntoOtherPanel", 1)
+		PlayerPrefs.DeleteKey("firstIntoOtherPanel")
+		PlayerPrefs.SetInt("firstIntoOtherPanel", 1)
 		PlayerPrefs.Save()
 	end
 end

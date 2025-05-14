@@ -26414,7 +26414,7 @@ _G.pg.base.spweapon_data_statistics[14090] = {
 
 _G.pg.base.spweapon_data_statistics[14100] = {
 	tech = 0,
-	name = "一张王牌 ",
+	name = "一张王牌",
 	value_2_random = 5,
 	type = 4,
 	value_1_random = 10,
