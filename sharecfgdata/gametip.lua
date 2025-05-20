@@ -28876,3 +28876,11 @@ _G.pg.base.gametip.challenge_minigame_unlock = {
 	tip = "小游戏未解锁"
 }
 
+_G.pg.base.gametip.storyline_camp = {
+	tip = "登场阵营"
+}
+
+_G.pg.base.gametip.storyline_goto = {
+	tip = "查看回忆"
+}
+

@@ -16,16 +16,12 @@ function var_0_0.UpdateTask(arg_1_0, arg_1_1, arg_1_2)
 	setActive(arg_1_0:findTF("btn_go", arg_1_2), var_1_5 ~= nil)
 
 	if arg_1_1 == 4 then
-		warning("                      type", var_1_1)
 		onButton(arg_1_0, arg_1_0:findTF("btn_go", arg_1_2), function()
 			local var_2_0 = getProxy(TaskProxy)
 			local var_2_1 = getProxy(ActivityProxy):getActivityById(ActivityConst.HOLIDAY_ACT_ID):getConfig("config_client").function_id
 			local var_2_2 = var_0_1[var_2_1[3]].task_id
-			local var_2_3 = var_2_0:getFinishTaskById(var_2_2)
 
-			warning(var_2_2, "                      springFinishTask:            ", var_2_3)
-
-			if var_2_3 then
+			if var_2_0:getFinishTaskById(var_2_2) then
 				onButton(arg_1_0, arg_1_0:findTF("btn_go", arg_1_2), function()
 					var_1_5()
 					pg.GameTrackerMgr.GetInstance():Record(GameTrackerBuilder.BuildUrJump(var_1_1))
@@ -34,15 +30,11 @@ function var_0_0.UpdateTask(arg_1_0, arg_1_1, arg_1_2)
 				pg.TipsMgr.GetInstance():ShowTips(i18n("challenge_minigame_unlock"))
 			end
 		end, SFX_PANEL)
-	elseif arg_1_1 ~= 4 then
-		warning("                      555555555", var_1_1)
-
-		if var_1_5 then
-			onButton(arg_1_0, arg_1_0:findTF("btn_go", arg_1_2), function()
-				var_1_5()
-				pg.GameTrackerMgr.GetInstance():Record(GameTrackerBuilder.BuildUrJump(var_1_1))
-			end)
-		end
+	elseif arg_1_1 ~= 4 and var_1_5 then
+		onButton(arg_1_0, arg_1_0:findTF("btn_go", arg_1_2), function()
+			var_1_5()
+			pg.GameTrackerMgr.GetInstance():Record(GameTrackerBuilder.BuildUrJump(var_1_1))
+		end)
 	end
 end
 
