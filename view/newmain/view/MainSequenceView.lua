@@ -2,6 +2,7 @@ local var_0_0 = class("MainSequenceView")
 
 function var_0_0.Ctor(arg_1_0)
 	arg_1_0.sequence = {
+		MainAwakeGuideSequence.New(),
 		MainRefundSequence.New(),
 		MainForcePlayerNameModificationSequence.New(),
 		MainRequestVoteInfoSequence.New(),
